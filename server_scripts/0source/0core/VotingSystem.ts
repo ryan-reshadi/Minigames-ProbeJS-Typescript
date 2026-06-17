@@ -24,13 +24,25 @@ class VotingSystem {
         });
         let mostVoted = '';
         let maxVotes = 0;
+        let distinct = false;
         voteCounts.forEach((count, player) => {
             if (count > maxVotes) {
                 maxVotes = count;
                 mostVoted = player;
+                distinct = true;
+            } else {
+                if (count == maxVotes) {
+                    distinct = false;
+                }
             }
+
         });
-        return mostVoted;
+        if (distinct) {
+            return mostVoted;
+        }
+        else {
+            return "";
+        }
     }
 
     public tick(): void {
