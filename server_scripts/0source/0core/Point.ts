@@ -7,8 +7,13 @@ class Point{
         this.y = y;
         this.z = z;
     }
-    public placeBlock(blockID:string, server:Internal.MinecraftServer):void{
-
+    public placeBlock(blockID:string, server:Internal.MinecraftServer, ensureAir:boolean = true):void{
+        if (ensureAir){
+            server.runCommandSilent("setblock "+ this.toString() + " " + blockID+ " keep");    
+        }
+        else{
+            server.runCommandSilent("setblock "+ this.toString() + " " + blockID);
+        }
     }
     public toString():string{
         return this.x + " " + this.y + " " + this.z;
