@@ -13,12 +13,12 @@ ItemEvents.dropped("supplementaries:wind_vane", (event: KubeEvent<typeof ItemEve
 ServerEvents.tick(event => {
     game.setServer(event.server);
     game.tick();
-    if (frameBuffer == 0) { 
+    if (frameBuffer == 0) {
         if (game.checkEndGame()) {
             game.end();
             game = new Dummy();
         }
-    } else{
+    } else {
         --frameBuffer;
     }
 });

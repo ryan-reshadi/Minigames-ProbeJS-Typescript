@@ -4,7 +4,7 @@ class AmongUs extends Game<AmongUsMap> {
     private readonly secondsforVoting = 50;
     private readonly confirmVoteOut = false;
     public constructor() {
-        super("amongus", false, false,);
+        super("amongus", false, false, false,);
         this.currentVoting = new VotingSystem();
     }
 
@@ -22,6 +22,10 @@ class AmongUs extends Game<AmongUsMap> {
         this.command("team join Alive @a[team=!Spectator]")
         this.command("team join Alive @a[team=Dead]")
         this.command("gamemode adventure @a[team=Alive]");
+        this.command("/kill @e[type=minecraft:item]");
+        this.addTimer(new Timer(10 * 20, () => {
+
+        }, true));
         for (var player of this.server.players) {
             this.command("/bossbar remove " + player.username.toLocaleLowerCase() + ":" + "kill");
         }
@@ -69,7 +73,7 @@ class AmongUs extends Game<AmongUsMap> {
         return false;
     }
     public override onPlayerDeath(player: Internal.Player): void {
-        if (player.getTeamId()!=="Spectator"){
+        if (player.getTeamId() !== "Spectator") {
             this.command("team join Dead " + player.username);
         }
     }
@@ -122,6 +126,7 @@ class AmongUs extends Game<AmongUsMap> {
         const attacker = (event.source.getImmediate() as Internal.Player)
         const victim = (event.entity as Internal.Player);
         const attackerRoleId = attacker.getTags()[0];
+
         for (var role of this.roles) {
             if (role.getID() == attackerRoleId) {
                 role.leftClickPlayer([attacker, victim, this.killSafe]);
@@ -132,6 +137,15 @@ class AmongUs extends Game<AmongUsMap> {
 
     public override playerInteractPlayer(event: KubeEvent<typeof ItemEvents.entityInteracted>): void {
 
+    }
+
+    protected override processDroppedItem(itemID: string, droppingPlayer: Internal.Player): boolean {
+        this.server.tell(itemID);
+        if (itemID == "minecraft:carved_pumpkin") {
+            this.command("/item replace entity " + droppingPlayer.username + " armor.head with minecraft:carved_pumpkin");
+            return true;
+        }
+        return false;
     }
 
     public override playerDamaged(event: KubeEvent<typeof EntityEvents.hurt>): void {
@@ -156,5 +170,8 @@ class AmongUs extends Game<AmongUsMap> {
             }
         }
         return false;
+    }
+    private summonItem(itemName: string, coords: Point) {
+        this.command("summon item " + coords.toString() + `{Item:{id:` + itemName + `,Count:1b}}`)
     }
 }

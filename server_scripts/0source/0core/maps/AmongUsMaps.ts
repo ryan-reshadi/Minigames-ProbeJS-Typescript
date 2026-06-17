@@ -2,8 +2,8 @@ abstract class AmongUsMap extends MapRegister {
     protected meetingPoint: Point;
     protected meetingBlockOffs: Point[] = [];
 
-    public constructor(pastePos: Point, path: string, meetingPoint: Point, meetingBlockOffs: Point[]) {
-        super(pastePos, path);
+    public constructor(pastePos: Point, path: string, xDim: number, yDim: number, zDim: number, meetingPoint: Point, meetingBlockOffs: Point[]) {
+        super(pastePos, path, xDim, yDim, zDim);
         this.meetingPoint = meetingPoint;
         this.meetingBlockOffs = meetingBlockOffs;
     }

@@ -6,8 +6,10 @@ abstract class Game<TMap extends MapRegister> {
     private parcool: boolean = false;
     protected currentVoting: VotingSystem | null = null;
     protected map?: TMap;
-    public constructor(name: string, betterCombat: boolean, parcool: boolean) {
+    protected allowItemDropping: boolean = true;
+    public constructor(name: string, allowDropping: boolean, betterCombat: boolean, parcool: boolean) {
         this.name = name;
+        this.allowItemDropping = allowDropping;
         this.betterCombat = betterCombat;
         this.parcool = parcool;
     }
@@ -26,6 +28,9 @@ abstract class Game<TMap extends MapRegister> {
         this.command("/kill @e[tag=kill]");
         this.command("tag @a remove kill");
         this.currentVoting?.tick();
+        if (!this.allowItemDropping) {
+            this.catchItemDrop();
+        }
     };
 
     public end(): void {
@@ -90,6 +95,16 @@ abstract class Game<TMap extends MapRegister> {
         });
 
         return ret;
+    }
+
+    public playerHasTag(player: Internal.Player, tagName: string): boolean {
+        const tags = player.getTags()
+        for (var tag of tags) {
+            if (tag == tagName){
+                return true;
+            }
+        }
+        return false;
     }
 
     public getPlayer(username: string): Internal.Player | null {
@@ -176,4 +191,29 @@ abstract class Game<TMap extends MapRegister> {
         this.map = map;
     }
 
+    protected catchItemDrop() {
+        this.server.allLevels.forEach((level: { getEntities: () => any[]; }) => {
+            level.getEntities().forEach(entity => {
+
+                // Check if the entity is a dropped item
+                if (entity.type === 'minecraft:item') {
+
+                    // Get the itemstack (the actual item data)
+                    const itemStack = entity.item
+
+                    // Try to find the player who dropped it (the owner)
+                    const droppingPlayer = entity.owner
+
+                    // Only act if we can identify the owner AND the item is not empty
+                    if (droppingPlayer) {
+                        if (!this.processDroppedItem(itemStack, droppingPlayer)) {
+                            droppingPlayer.give(itemStack)
+                            entity.kill()
+                        }
+                    }
+                }
+            })
+        })
+    }
+    protected abstract processDroppedItem(itemID: string, droppingPlayer: Internal.Player): boolean;
 }
