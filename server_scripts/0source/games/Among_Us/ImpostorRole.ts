@@ -1,8 +1,8 @@
 class ImpostorRole extends Role {
     private baseKillCooldown = 20;
-    private tool: string = "better_weaponry:iron_dagger";
+    private readonly tool: string = "better_weaponry:iron_dagger";
     private killCooldown: Ability[] = [];
-    private numPoints: number = 7;
+    
     public constructor(amount: number, killCooldown: number) {
         super("impostor", amount);
         this.baseKillCooldown = killCooldown;
@@ -39,7 +39,8 @@ class ImpostorRole extends Role {
         player.server.runCommandSilent('title ' + player.username + ' times 20 100 20');
         player.server.runCommandSilent('title ' + player.username + ' title { "text": "IMPOSTOR", "color": "dark_red", "bold": true }');
         player.server.runCommandSilent('title ' + player.username + ' subtitle { "text": "Eliminate everyone else", "color": "red" }');
-        player.server.runCommandSilent('give ' + player.username + ' better_weaponry:iron_dagger');
+        player.server.runCommandSilent('item replace entity ' + player.username + ' inventory.0 with better_weaponry:iron_dagger');
+        player.tell("You can find your dagger in your inventory");
 
     }
     public override assignToPlayer(player: Internal.Player): void {

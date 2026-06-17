@@ -21,10 +21,11 @@ abstract class Game {
 
     public tick(): void {
         this.timers.forEach((value: Timer) => (value.tick()));
-        // this.server.runCommandSilent('parcool ' + this.booleanToEnable(this.parcool));
-        // this.server.runCommandSilent('bctoggle ' + this.booleanToEnable(this.betterCombat));
+        this.server.runCommandSilent('parcool ' + this.booleanToEnable(this.parcool));
+        this.server.runCommandSilent('bctoggle ' + this.booleanToEnable(this.betterCombat));
         this.command("/kill @e[tag=kill]");
         this.command ("tag @a remove kill");
+        
     };
 
     public end(): void {

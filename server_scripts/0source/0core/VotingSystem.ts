@@ -2,6 +2,7 @@ class VotingSystem {
     //key: voting player, value: voted object
     private votes: Map<string, string>;
     private active:boolean = false;
+    private activeTimer:Timer|null = null;
     constructor() {
         this.votes = new Map<string, string>();
     }
@@ -24,6 +25,12 @@ class VotingSystem {
             }
         });
         return mostVoted;
+    }
+
+    public tick():void{
+        if (this.activeTimer){
+            this.activeTimer.tick();
+        }
     }
 
     public resetVotes(): void {
@@ -56,5 +63,13 @@ class VotingSystem {
 
     public setActive(activator:boolean){
         this.active = activator;
+    }
+    public setActiveFor(activeTicks:number){
+        this.enable()
+        console.log("started");
+        this.activeTimer = new Timer(activeTicks,() => {
+            console.log("ended");
+            this.disable();
+        })
     }
 }

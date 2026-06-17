@@ -1,12 +1,8 @@
 abstract class MapRegister {
-    private pasteX: number;
-    private pasteY: number;
-    private pasteZ: number;
+    private pastePoint: Point;
     private structureName: string;
     public constructor(x: number, y: number, z: number, path: string) {
-        this.pasteX = x;
-        this.pasteY = y;
-        this.pasteZ = z;
+        this.pastePoint = new Point(x, y, z);
         this.structureName = path;
     }
 

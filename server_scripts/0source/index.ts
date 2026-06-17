@@ -45,6 +45,12 @@ ServerEvents.commandRegistry(event => {
                     })
             )
     );
+
+    event.register(
+        commands.literal('instructions').executes((ctx: any) => {
+            ctx.source.server.runCommandSilent()
+        })
+    )
 });
 
 EntityEvents.death((event: KubeEvent<typeof EntityEvents.death>) => {
@@ -59,9 +65,15 @@ EntityEvents.hurt((event: KubeEvent<typeof EntityEvents.hurt>) => {
         if (event.source.getImmediate() && (event.source.getImmediate()).type == "minecraft:player") {
             game.playerAttackPlayer(event);
         }
-        else{
+        else {
             game.playerDamaged(event);
         }
 
     }
 });
+
+PlayerEvents.chat((event: KubeEvent<typeof PlayerEvents.chat>) => {
+    if (event.message.contains("hey")){
+        event.player.tell("fuck yuou")
+    }
+})
