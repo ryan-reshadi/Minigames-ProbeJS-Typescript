@@ -59,8 +59,10 @@ class VotingSystem {
         this.active = true;
     }
 
-    public disable(): void {
+    public disable(extraCode: () => void = () => { }): void {
         this.active = false;
+        extraCode();
+        this.activeTimer = null;
     }
 
     public isActive(): boolean {

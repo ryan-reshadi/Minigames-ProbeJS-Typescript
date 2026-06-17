@@ -1,7 +1,7 @@
 abstract class MapRegister {
     private pastePoint: Point;
     private structureName: string;
-    public constructor(pastePos:Point, path: string) {
+    public constructor(pastePos: Point, path: string) {
         this.pastePoint = pastePos;
         this.structureName = path;
     }
@@ -10,6 +10,6 @@ abstract class MapRegister {
         server.runCommandSilent("place template " + this.structureName + "");
     }
 
-    public abstract teleportPlayers(players: Internal.Player[], server: Internal.MinecraftServer): void;
+    public abstract teleportPlayers(server: Internal.MinecraftServer): void;
 
 }

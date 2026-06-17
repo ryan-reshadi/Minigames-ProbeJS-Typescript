@@ -1,10 +1,10 @@
-abstract class Game {
+abstract class Game<TMap extends MapRegister> {
     protected server!: Internal.MinecraftServer;
     protected timers: Timer[] = [];
     private betterCombat: boolean = false;
     private parcool: boolean = false;
     protected currentVoting: VotingSystem | null = null;
-
+    protected map?: TMap;
     public constructor(betterCombat: boolean, parcool: boolean) {
         this.betterCombat = betterCombat;
         this.parcool = parcool;
@@ -12,8 +12,6 @@ abstract class Game {
     public setServer(server: Internal.MinecraftServer) {
         this.server = server;
     }
-
-    public abstract pasteMap(): void;
 
     public abstract playerInteractEntity(event: any): void;
 
@@ -172,4 +170,8 @@ abstract class Game {
     public vote(voter: Internal.Player, votee: any) {
         this.currentVoting?.vote(voter, votee);
     }
+    public setMap(map: TMap) {
+        this.map = map;
+    }
+
 }

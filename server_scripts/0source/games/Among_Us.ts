@@ -1,8 +1,9 @@
-class AmongUs extends Game {
+class AmongUs extends Game<AmongUsMap> {
     private roles: Role[] = [new ImpostorRole(1, 20)];
     private killSafe: boolean = false;
+    private readonly secondsforVoting = 50;
     public constructor() {
-        super(false, false);
+        super(false, false,);
         this.currentVoting = new VotingSystem();
     }
 
@@ -24,6 +25,8 @@ class AmongUs extends Game {
             role.assignToRandomPlayers(this.playersOnTeam("Alive"), []);
         })
         this.server.tell("Imposters:" + this.roles[0].getPlayers());
+        this.setMap(new CastleMap());
+        this.map?.teleportPlayers(this.server);
     }
 
     public override tick(): void {
@@ -31,20 +34,20 @@ class AmongUs extends Game {
         for (var role of this.roles) {
             role.tick(this.server);
         }
-        if (!this.checkIfImpostersAlive()){
+        if (!this.checkIfImpostersAlive()) {
             this.end();
             this.server.tell("The Imposters were:");
-            for (var player of this.roles[0].getPlayers()){
+            for (var player of this.roles[0].getPlayers()) {
                 this.server.tell(player.username);
             }
             this.command(`tellraw @a {"text":"Crewmates Win!","color":"green","bold":true}`);
         }
-        
+
     }
 
     public end(): void {
-        for (var player of this.roles[0].getPlayers()){
-            this.command("/bossbar remove "+player.username.toLocaleLowerCase()+":"+"kill");
+        for (var player of this.roles[0].getPlayers()) {
+            this.command("/bossbar remove " + player.username.toLocaleLowerCase() + ":" + "kill");
         }
     }
     public onPlayerDeath(player: Internal.Player): void {
@@ -61,7 +64,9 @@ class AmongUs extends Game {
                 break;
             }
         }
-        this.currentVoting?.enable();
+        this.map?.summonToMeeting(this.server);
+        this.currentVoting = new VotingSystem()
+        this.currentVoting?.setActiveFor();
     }
 
 
@@ -71,9 +76,7 @@ class AmongUs extends Game {
         this.registerMeeting(caller);
     }
 
-    private teleportPlayersToMeetingRoom() {
 
-    }
 
     public playerAttackPlayer(event: KubeEvent<typeof EntityEvents.hurt>): void {
         const attacker = (event.source.getImmediate() as Internal.Player)
@@ -97,17 +100,13 @@ class AmongUs extends Game {
         }
     }
 
-    public pasteMap(): void {
-
-    }
-
     private tellVillagers() {
 
     }
-    private checkIfImpostersAlive(){
-        
-        for (var player of this.roles[0].getPlayers()){
-            if (player.team.getName() == "Alive"){
+    private checkIfImpostersAlive() {
+
+        for (var player of this.roles[0].getPlayers()) {
+            if (player.team.getName() == "Alive") {
                 return true;
             }
         }
