@@ -1,0 +1,67 @@
+var game = new AmongUs();
+
+ItemEvents.dropped("supplementaries:wind_vane", (event: KubeEvent<typeof ItemEvents.dropped>) => {
+    game.start();
+});
+
+
+//whenever calling tick or start, pass in event.server ALWAYS
+
+
+ServerEvents.tick(event => {
+    game.setServer(event.server);
+    game.tick();
+});
+
+
+ItemEvents.entityInteracted(event => {
+    game.playerInteractEntity(event);
+});
+
+ServerEvents.commandRegistry(event => {
+    const { commands, arguments: args } = event;
+
+    event.register(
+        commands.literal('vote')
+            .requires((src: any) => src.hasPermission(0))
+            .then(
+                commands.argument('targetPlayer', args.PLAYER.create(event))
+                    .executes((ctx: any) => {
+                        // ctx.source.player can be null if run from the server console
+                        const player = ctx.source.player;
+
+                        // Explicitly cast the argument to a ServerPlayer
+                        const targetPlayer = args.PLAYER.getResult(ctx, 'targetPlayer');
+
+                        if (player) {
+                            player.tell('Voting for ' + targetPlayer.username + '...');
+                            targetPlayer.tell('You have received a vote from ' + player.username + '!');
+                        } else {
+                            // Fallback handle if command is run by console/RCON
+                            targetPlayer.tell('You have received a vote from the Console!');
+                        }
+
+                        return 1;
+                    })
+            )
+    );
+});
+
+EntityEvents.death((event: KubeEvent<typeof EntityEvents.death>) => {
+    if (event.entity.type == "minecraft:player") {
+        game.onPlayerDeath(event.entity as Internal.Player)
+    }
+});
+
+EntityEvents.hurt((event: KubeEvent<typeof EntityEvents.hurt>) => {
+
+    if (event.entity.type == "minecraft:player") {
+        if (event.source.getImmediate() && (event.source.getImmediate()).type == "minecraft:player") {
+            game.playerAttackPlayer(event);
+        }
+        else{
+            game.playerDamaged(event);
+        }
+
+    }
+});
