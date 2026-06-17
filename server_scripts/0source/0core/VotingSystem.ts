@@ -1,14 +1,20 @@
 class VotingSystem {
     //key: voting player, value: voted object
     private votes: Map<string, string>;
-    private active:boolean = false;
-    private activeTimer:Timer|null = null;
+    private active: boolean = false;
+    private activeTimer: Timer | null = null;
     constructor() {
         this.votes = new Map<string, string>();
     }
 
-    public vote(voter: string, votee: string): void {
-        this.votes.set(voter, votee);
+    public vote(voter: Internal.Player, votee: string): void {
+        if (this.active) {
+            this.votes.set(voter.username, votee);
+            voter.tell("Voted for " + votee + "...")
+        }
+        else {
+            voter.tell("Voting hasn't opened yet");
+        }
     }
 
     public findMostVoted(): string {
@@ -27,8 +33,8 @@ class VotingSystem {
         return mostVoted;
     }
 
-    public tick():void{
-        if (this.activeTimer){
+    public tick(): void {
+        if (this.activeTimer) {
             this.activeTimer.tick();
         }
     }
@@ -49,25 +55,25 @@ class VotingSystem {
         });
     }
 
-    public enable():void{
+    public enable(): void {
         this.active = true;
     }
 
-    public disable():void {
+    public disable(): void {
         this.active = false;
     }
 
-    public isActive():boolean {
+    public isActive(): boolean {
         return this.active;
     }
 
-    public setActive(activator:boolean){
+    public setActive(activator: boolean) {
         this.active = activator;
     }
-    public setActiveFor(activeTicks:number){
+    public setActiveFor(activeTicks: number) {
         this.enable()
         console.log("started");
-        this.activeTimer = new Timer(activeTicks,() => {
+        this.activeTimer = new Timer(activeTicks, () => {
             console.log("ended");
             this.disable();
         })

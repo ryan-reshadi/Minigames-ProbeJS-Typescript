@@ -1,8 +1,7 @@
-class CastleMap extends MapRegister implements AmongUsMap {
-    meetingPoint: Point;
+class CastleMap extends AmongUsMap {
     
     constructor() {
-        super(19.54, -60.00, -113.52, "pvpdreadlord:castle");
+        super(19 -60 -114, "pvpdreadlord:castle", );
         this.meetingPoint = new Point();
     }
     public teleportPlayers(players: Internal.Player[], server: Internal.MinecraftServer): void {

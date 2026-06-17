@@ -34,11 +34,10 @@ ServerEvents.commandRegistry(event => {
                         const targetPlayer = args.PLAYER.getResult(ctx, 'targetPlayer');
 
                         if (player) {
-                            player.tell('Voting for ' + targetPlayer.username + '...');
-                            targetPlayer.tell('You have received a vote from ' + player.username + '!');
+                            game.vote(player,targetPlayer.username);
                         } else {
                             // Fallback handle if command is run by console/RCON
-                            targetPlayer.tell('You have received a vote from the Console!');
+                            player.tell("Error");
                         }
 
                         return 1;

@@ -7,5 +7,10 @@ class Point{
         this.y = y;
         this.z = z;
     }
-    
+    public placeBlock(blockID:string, server:Internal.MinecraftServer):void{
+
+    }
+    public toString():string{
+        return this.x + " " + this.y + " " + this.z;
+    }
 }

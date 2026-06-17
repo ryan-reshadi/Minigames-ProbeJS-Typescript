@@ -3,9 +3,9 @@ abstract class Game {
     protected timers: Timer[] = [];
     private betterCombat: boolean = false;
     private parcool: boolean = false;
-    protected currentVoting:VotingSystem|null = null;
+    protected currentVoting: VotingSystem | null = null;
 
-    public constructor(betterCombat: boolean, parcool:boolean) {
+    public constructor(betterCombat: boolean, parcool: boolean) {
         this.betterCombat = betterCombat;
         this.parcool = parcool;
     }
@@ -24,8 +24,8 @@ abstract class Game {
         this.server.runCommandSilent('parcool ' + this.booleanToEnable(this.parcool));
         this.server.runCommandSilent('bctoggle ' + this.booleanToEnable(this.betterCombat));
         this.command("/kill @e[tag=kill]");
-        this.command ("tag @a remove kill");
-        
+        this.command("tag @a remove kill");
+
     };
 
     public end(): void {
@@ -70,7 +70,7 @@ abstract class Game {
         const players = this.server.players;
         for (const player of players) {
             const team = player.getTeam();
-            
+
             if (team && team.getName() === teamName) {
                 ret.push(player);
             }
@@ -159,17 +159,17 @@ abstract class Game {
     };
 
     public playerDamaged(event: KubeEvent<typeof EntityEvents.hurt>): void {
-        
+
     };
 
     public playerInteractPlayer(event: KubeEvent<typeof ItemEvents.entityInteracted>): void {
 
     };
 
-    public getBlockAt(point:Point):string{
-        return this.getServer().overworld().getBlock(0,0,0)
+    public getBlockAt(point: Point): string {
+        return this.getServer().overworld().getBlock(0, 0, 0)
     }
-    public vote(voter: Internal.Player, votee:any){
-        this.currentVoting?.vote(voter.username, votee);
+    public vote(voter: Internal.Player, votee: any) {
+        this.currentVoting?.vote(voter, votee);
     }
 }
