@@ -11,9 +11,14 @@ class ImpostorRole extends Role {
     public rightClickPlayer(args: any[]) {
 
     }
-    public leftClickPlayer(args: any[]) {
+    public leftClickPlayer(args: any[]):any {
         const impostor = (args[0] as Internal.Player);
         const victim = (args[1] as Internal.Entity);
+        const killSafe = (args[3] as boolean)
+        if (killSafe){
+            impostor.tell("You cannot kill during this period...");
+            return;
+        }
         const mainHandID = (impostor.mainHandItem as Internal.ItemStack).id;
 
         if ((mainHandID as String == this.tool) && (impostor).getTags().contains("impostor") && (!victim.getTags().contains("impostor")) && ((victim as Internal.Entity).team.getName() == "Alive")) {
