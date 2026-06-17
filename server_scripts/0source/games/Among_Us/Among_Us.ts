@@ -17,6 +17,7 @@ class AmongUs extends Game<AmongUsMap> {
 
 
     public override start(): void {
+        console.log("hello");
         this.roles = [new ImpostorRole(1, 20)];
         this.resetTags();
         this.command("team join Alive @a[team=!Spectator]")
@@ -35,7 +36,7 @@ class AmongUs extends Game<AmongUsMap> {
         for (var role of this.roles) {
             role.tick(this.server);
         }
-        
+
 
     }
 
@@ -44,9 +45,9 @@ class AmongUs extends Game<AmongUsMap> {
             this.command("/bossbar remove " + player.username.toLocaleLowerCase() + ":" + "kill");
         }
     }
-    public override checkEndGame():boolean{
+    public override checkEndGame(): boolean {
         if (!this.checkIfImpostersAlive()) {
-            
+
             this.server.tell("The Imposters were:");
             for (var player of this.roles[0].getPlayers()) {
                 this.server.tell(player.username);
@@ -55,7 +56,7 @@ class AmongUs extends Game<AmongUsMap> {
             return true;
         }
         const impostorNum = this.roles[0].getPlayers.length;
-        if ( impostorNum == this.playersOnTeam("Alive").length ){
+        if (impostorNum == this.playersOnTeam("Alive").length) {
             this.server.tell("The Imposters were:");
             for (var player of this.roles[0].getPlayers()) {
                 this.server.tell(player.username);
@@ -84,16 +85,21 @@ class AmongUs extends Game<AmongUsMap> {
 
         this.currentVoting = new VotingSystem()
 
-        this.currentVoting?.setActiveFor(this.secondsforVoting*20, () => {
+        this.currentVoting?.setActiveFor(this.secondsforVoting * 20, () => {
             this.map?.releaseMeeting(this.server);
             const votedOut = this.currentVoting?.findMostVoted();
-            this.command("tag "+votedOut+" add kill");
-            this.server.tell(votedOut + " was voted out...");
-            if (this.confirmVoteOut){
+            if (votedOut == "") {
+                this.server.tell("A tie or skip, no one was voted out...")
+            }
+            else {
+                this.command("tag " + votedOut + " add kill");
+                this.server.tell(votedOut + " was voted out...");
+            }
+            if (this.confirmVoteOut) {
                 this.server.tell(this.roles[0].getPlayers().length + " imposter(s) remain...");
             }
         });
-
+        this.server.tell(this.currentVoting.getTimer())
     }
 
 

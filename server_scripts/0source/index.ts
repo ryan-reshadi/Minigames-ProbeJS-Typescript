@@ -1,6 +1,8 @@
-var game:Game<MapRegister> = new AmongUs();
-
+var game: Game<MapRegister> = new Dummy();
+var frameBuffer = 10;
 ItemEvents.dropped("supplementaries:wind_vane", (event: KubeEvent<typeof ItemEvents.dropped>) => {
+    game = new AmongUs()
+    game.setServer(event.server);
     game.start();
 });
 
@@ -11,9 +13,13 @@ ItemEvents.dropped("supplementaries:wind_vane", (event: KubeEvent<typeof ItemEve
 ServerEvents.tick(event => {
     game.setServer(event.server);
     game.tick();
-    if (game.checkEndGame()){
-        game.end();
-        game = new Dummy();
+    if (frameBuffer == 0) { 
+        if (game.checkEndGame()) {
+            game.end();
+            game = new Dummy();
+        }
+    } else{
+        --frameBuffer;
     }
 });
 
@@ -38,7 +44,7 @@ ServerEvents.commandRegistry(event => {
                         const targetPlayer = args.PLAYER.getResult(ctx, 'targetPlayer');
 
                         if (player) {
-                            game.vote(player,targetPlayer.username);
+                            game.vote(player, targetPlayer.username);
                         } else {
                             // Fallback handle if command is run by console/RCON
                             player.tell("Error");
@@ -76,7 +82,7 @@ EntityEvents.hurt((event: KubeEvent<typeof EntityEvents.hurt>) => {
 });
 
 PlayerEvents.chat((event: KubeEvent<typeof PlayerEvents.chat>) => {
-    if (event.message.contains("hey")){
+    if (event.message.contains("hey")) {
         event.player.tell("fuck yuou")
     }
 })

@@ -8,6 +8,7 @@ class Timer {
     constructor(maxTime: number, execution: () => void, repeating: boolean = false) {
         this.time = 0;
         this.maxTime = maxTime;
+        this.time = maxTime;
         this.running = false;
         this.repeating = repeating;
         this.execution = execution;

@@ -46,9 +46,9 @@ class VotingSystem {
     }
 
     public tick(): void {
+        console.log(this.activeTimer?.getRemainingTime());
         if (this.activeTimer) {
             this.activeTimer.tick();
-            console.log(this.activeTimer.getRemainingTime());
         }
     }
 
@@ -88,10 +88,17 @@ class VotingSystem {
     public setActiveFor(activeTicks: number, extraCode: () => void = () => { }) {
         this.enable()
         console.log("started");
+        console.log(activeTicks);
         this.activeTimer = new Timer(activeTicks, () => {
             console.log("ended");
             this.disable();
             extraCode();
         })
+        this.activeTimer.start();
+        console.log(this.activeTimer.getRemainingTime());
+    }
+
+    public getTimer(): Timer|null {
+        return this.activeTimer;
     }
 }
