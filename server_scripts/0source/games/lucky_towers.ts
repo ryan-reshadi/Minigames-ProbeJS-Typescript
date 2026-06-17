@@ -1,8 +1,11 @@
-class LuckyTowers extends Game {
+class LuckyTowers extends Game<MapRegister> {
+    public checkEndGame(): boolean {
+        throw new Error("Method not implemented.");
+    }
     public playerAttackPlayer(event: Internal.Event): void {
         throw new Error("Method not implemented.");
     }
-    public playerInteractPlayer(event:KubeEvent<typeof ItemEvents.entityInteracted>): void {
+    public playerInteractPlayer(event: KubeEvent<typeof ItemEvents.entityInteracted>): void {
         throw new Error("Method not implemented.");
     }
     public pasteMap(): void {
@@ -47,7 +50,7 @@ class LuckyTowers extends Game {
     }
 
     public onPlayerDeath(player: Internal.Player): void {
-        this.command("team join Dead "+ player.username);
+        this.command("team join Dead " + player.username);
     }
     private setUpLootManager() {
 
