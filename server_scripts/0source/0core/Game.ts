@@ -1,11 +1,13 @@
 abstract class Game<TMap extends MapRegister> {
+    protected name:string;
     protected server!: Internal.MinecraftServer;
     protected timers: Timer[] = [];
     private betterCombat: boolean = false;
     private parcool: boolean = false;
     protected currentVoting: VotingSystem | null = null;
     protected map?: TMap;
-    public constructor(betterCombat: boolean, parcool: boolean) {
+    public constructor(name:string,betterCombat: boolean, parcool: boolean) {
+        this.name = name;
         this.betterCombat = betterCombat;
         this.parcool = parcool;
     }

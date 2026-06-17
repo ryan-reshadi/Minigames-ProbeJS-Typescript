@@ -3,7 +3,7 @@ class AmongUs extends Game<AmongUsMap> {
     private killSafe: boolean = false;
     private readonly secondsforVoting = 50;
     public constructor() {
-        super(false, false,);
+        super("amongus", false, false,);
         this.currentVoting = new VotingSystem();
     }
 
@@ -24,7 +24,6 @@ class AmongUs extends Game<AmongUsMap> {
         this.roles.forEach((role: Role) => {
             role.assignToRandomPlayers(this.playersOnTeam("Alive"), []);
         })
-        this.server.tell("Imposters:" + this.roles[0].getPlayers());
         this.setMap(new CastleMap());
         this.map?.teleportPlayers(this.server);
     }
@@ -107,7 +106,12 @@ class AmongUs extends Game<AmongUsMap> {
     }
 
     private tellVillagers() {
-
+        const players = this.server.players;
+        for (var player of players) {
+            if (player.getTags().length == 0 && player.getTeamId() == "Alive") {
+                player.tell("You are a villager...")
+            }
+        }
     }
     private checkIfImpostersAlive() {
 

@@ -14,12 +14,17 @@ abstract class AmongUsMap extends MapRegister {
     }
 
     public releaseMeeting(server: Internal.MinecraftServer) {
-        this.fillBlockOff("minecraft:air",server);
+        this.fillBlockOff("minecraft:air", server);
     }
 
     public fillBlockOff(blockID: string, server: Internal.MinecraftServer): void {
         for (var point of this.meetingBlockOffs) {
             point.placeBlock(blockID, server, true);
+        }
+    }
+    public emptyBlockOff(server: Internal.MinecraftServer) {
+        for (var point of this.meetingBlockOffs) {
+            point.placeBlock("minecraft:air", server, false);
         }
     }
 }
