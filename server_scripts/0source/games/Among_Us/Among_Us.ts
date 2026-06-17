@@ -22,6 +22,9 @@ class AmongUs extends Game<AmongUsMap> {
         this.command("team join Alive @a[team=!Spectator]")
         this.command("team join Alive @a[team=Dead]")
         this.command("gamemode adventure @a[team=Alive]");
+        for (var player of this.server.players) {
+            this.command("/bossbar remove " + player.username.toLocaleLowerCase() + ":" + "kill");
+        }
         this.roles.forEach((role: Role) => {
             role.assignToRandomPlayers(this.playersOnTeam("Alive"), []);
         })
@@ -66,7 +69,9 @@ class AmongUs extends Game<AmongUsMap> {
         return false;
     }
     public override onPlayerDeath(player: Internal.Player): void {
-        this.command("team join Dead " + player.username);
+        if (player.getTeamId()!=="Spectator"){
+            this.command("team join Dead " + player.username);
+        }
     }
     private registerMeeting(caller: Internal.Player): void {
 
