@@ -1,4 +1,4 @@
-var game = new AmongUs();
+var game:Game<MapRegister> = new AmongUs();
 
 ItemEvents.dropped("supplementaries:wind_vane", (event: KubeEvent<typeof ItemEvents.dropped>) => {
     game.start();
@@ -11,6 +11,10 @@ ItemEvents.dropped("supplementaries:wind_vane", (event: KubeEvent<typeof ItemEve
 ServerEvents.tick(event => {
     game.setServer(event.server);
     game.tick();
+    if (game.checkEndGame()){
+        game.end();
+        game = new Dummy();
+    }
 });
 
 

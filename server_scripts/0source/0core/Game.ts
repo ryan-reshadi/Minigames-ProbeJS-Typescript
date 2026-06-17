@@ -1,12 +1,12 @@
 abstract class Game<TMap extends MapRegister> {
-    protected name:string;
+    protected name: string;
     protected server!: Internal.MinecraftServer;
     protected timers: Timer[] = [];
     private betterCombat: boolean = false;
     private parcool: boolean = false;
     protected currentVoting: VotingSystem | null = null;
     protected map?: TMap;
-    public constructor(name:string,betterCombat: boolean, parcool: boolean) {
+    public constructor(name: string, betterCombat: boolean, parcool: boolean) {
         this.name = name;
         this.betterCombat = betterCombat;
         this.parcool = parcool;
@@ -18,14 +18,14 @@ abstract class Game<TMap extends MapRegister> {
     public abstract playerInteractEntity(event: any): void;
 
     public abstract start(): void;
-
+    public abstract checkEndGame(): boolean;
     public tick(): void {
         this.timers.forEach((value: Timer) => (value.tick()));
-        this.server.runCommandSilent('parcool ' + this.booleanToEnable(this.parcool));
-        this.server.runCommandSilent('bctoggle ' + this.booleanToEnable(this.betterCombat));
+        // this.server.runCommandSilent('parcool ' + this.booleanToEnable(this.parcool));
+        // this.server.runCommandSilent('bctoggle ' + this.booleanToEnable(this.betterCombat));
         this.command("/kill @e[tag=kill]");
         this.command("tag @a remove kill");
-
+        this.currentVoting?.tick();
     };
 
     public end(): void {

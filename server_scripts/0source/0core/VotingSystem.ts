@@ -48,6 +48,7 @@ class VotingSystem {
     public tick(): void {
         if (this.activeTimer) {
             this.activeTimer.tick();
+            console.log(this.activeTimer.getRemainingTime());
         }
     }
 

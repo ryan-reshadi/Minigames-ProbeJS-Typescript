@@ -1,4 +1,7 @@
 class Dummy extends Game<MapRegister> {
+    public checkEndGame(): boolean {
+        return false;
+    }
     public constructor(){
         super("dummy",true, true);
     }

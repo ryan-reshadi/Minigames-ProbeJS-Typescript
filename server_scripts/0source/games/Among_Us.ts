@@ -2,6 +2,7 @@ class AmongUs extends Game<AmongUsMap> {
     private roles: Role[] = [new ImpostorRole(1, 20)];
     private killSafe: boolean = false;
     private readonly secondsforVoting = 50;
+    private readonly confirmVoteOut = false;
     public constructor() {
         super("amongus", false, false,);
         this.currentVoting = new VotingSystem();
@@ -24,6 +25,7 @@ class AmongUs extends Game<AmongUsMap> {
         this.roles.forEach((role: Role) => {
             role.assignToRandomPlayers(this.playersOnTeam("Alive"), []);
         })
+        this.tellVillagers();
         this.setMap(new CastleMap());
         this.map?.teleportPlayers(this.server);
     }
@@ -33,23 +35,37 @@ class AmongUs extends Game<AmongUsMap> {
         for (var role of this.roles) {
             role.tick(this.server);
         }
+        
+
+    }
+
+    public override end(): void {
+        for (var player of this.roles[0].getPlayers()) {
+            this.command("/bossbar remove " + player.username.toLocaleLowerCase() + ":" + "kill");
+        }
+    }
+    public override checkEndGame():boolean{
         if (!this.checkIfImpostersAlive()) {
-            this.end();
+            
             this.server.tell("The Imposters were:");
             for (var player of this.roles[0].getPlayers()) {
                 this.server.tell(player.username);
             }
             this.command(`tellraw @a {"text":"Crewmates Win!","color":"green","bold":true}`);
+            return true;
         }
-
-    }
-
-    public end(): void {
-        for (var player of this.roles[0].getPlayers()) {
-            this.command("/bossbar remove " + player.username.toLocaleLowerCase() + ":" + "kill");
+        const impostorNum = this.roles[0].getPlayers.length;
+        if ( impostorNum == this.playersOnTeam("Alive").length ){
+            this.server.tell("The Imposters were:");
+            for (var player of this.roles[0].getPlayers()) {
+                this.server.tell(player.username);
+            }
+            this.command(`tellraw @a {"text":"Imposters Win!","color":"red","bold":true}`)
+            return true;
         }
+        return false;
     }
-    public onPlayerDeath(player: Internal.Player): void {
+    public override onPlayerDeath(player: Internal.Player): void {
         this.command("team join Dead " + player.username);
     }
     private registerMeeting(caller: Internal.Player): void {
@@ -68,8 +84,14 @@ class AmongUs extends Game<AmongUsMap> {
 
         this.currentVoting = new VotingSystem()
 
-        this.currentVoting?.setActiveFor(400, () => {
+        this.currentVoting?.setActiveFor(this.secondsforVoting*20, () => {
             this.map?.releaseMeeting(this.server);
+            const votedOut = this.currentVoting?.findMostVoted();
+            this.command("tag "+votedOut+" add kill");
+            this.server.tell(votedOut + " was voted out...");
+            if (this.confirmVoteOut){
+                this.server.tell(this.roles[0].getPlayers().length + " imposter(s) remain...");
+            }
         });
 
     }
@@ -83,7 +105,7 @@ class AmongUs extends Game<AmongUsMap> {
 
 
 
-    public playerAttackPlayer(event: KubeEvent<typeof EntityEvents.hurt>): void {
+    public override playerAttackPlayer(event: KubeEvent<typeof EntityEvents.hurt>): void {
         const attacker = (event.source.getImmediate() as Internal.Player)
         const victim = (event.entity as Internal.Player);
         const attackerRoleId = attacker.getTags()[0];
@@ -95,11 +117,11 @@ class AmongUs extends Game<AmongUsMap> {
         event.cancel();
     }
 
-    public playerInteractPlayer(event: KubeEvent<typeof ItemEvents.entityInteracted>): void {
+    public override playerInteractPlayer(event: KubeEvent<typeof ItemEvents.entityInteracted>): void {
 
     }
 
-    public playerDamaged(event: KubeEvent<typeof EntityEvents.hurt>): void {
+    public override playerDamaged(event: KubeEvent<typeof EntityEvents.hurt>): void {
         if (!event.entity.getTags().contains("kill")) {
             event.cancel()
         }
