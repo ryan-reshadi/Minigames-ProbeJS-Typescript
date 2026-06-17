@@ -64,9 +64,15 @@ class AmongUs extends Game<AmongUsMap> {
                 break;
             }
         }
+
         this.map?.summonToMeeting(this.server);
+
         this.currentVoting = new VotingSystem()
-        this.currentVoting?.setActiveFor();
+
+        this.currentVoting?.setActiveFor(400, () => {
+            this.map?.releaseMeeting(this.server);
+        });
+
     }
 
 

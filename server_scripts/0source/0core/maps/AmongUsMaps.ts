@@ -14,7 +14,7 @@ abstract class AmongUsMap extends MapRegister {
     }
 
     public releaseMeeting(server: Internal.MinecraftServer) {
-
+        this.fillBlockOff("minecraft:air",server);
     }
 
     public fillBlockOff(blockID: string, server: Internal.MinecraftServer): void {

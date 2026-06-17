@@ -72,12 +72,13 @@ class VotingSystem {
     public setActive(activator: boolean) {
         this.active = activator;
     }
-    public setActiveFor(activeTicks: number) {
+    public setActiveFor(activeTicks: number, extraCode: () => void = () => { }) {
         this.enable()
         console.log("started");
         this.activeTimer = new Timer(activeTicks, () => {
             console.log("ended");
             this.disable();
+            extraCode();
         })
     }
 }
