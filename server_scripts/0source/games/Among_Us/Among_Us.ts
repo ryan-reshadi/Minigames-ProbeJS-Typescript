@@ -17,7 +17,6 @@ class AmongUs extends Game<AmongUsMap> {
 
 
     public override start(): void {
-        console.log("hello");
         this.roles = [new ImpostorRole(1, 20)];
         this.resetTags();
         this.command("team join Alive @a[team=!Spectator]")
@@ -92,8 +91,11 @@ class AmongUs extends Game<AmongUsMap> {
                 this.server.tell("A tie or skip, no one was voted out...")
             }
             else {
-                this.command("tag " + votedOut + " add kill");
                 this.server.tell(votedOut + " was voted out...");
+                this.addTimer(new Timer(3 * 20, () => {
+                    this.command("tag " + votedOut + " add kill");
+                    this.removeCorpses();
+                }))
             }
             if (this.confirmVoteOut) {
                 this.server.tell(this.roles[0].getPlayers().length + " imposter(s) remain...");
