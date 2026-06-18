@@ -1,4 +1,6 @@
 abstract class Game<TMap extends MapRegister> {
+    static CurrentGame: Game<MapRegister> | null = null;
+    private tickCount:number;
     protected name: string;
     protected server!: Internal.MinecraftServer;
     protected timers: Timer[] = [];
@@ -13,6 +15,8 @@ abstract class Game<TMap extends MapRegister> {
         this.allowItemDropping = allowDropping;
         this.betterCombat = betterCombat;
         this.parcool = parcool;
+        this.tickCount = 0;
+        Game.CurrentGame = this;
     }
 
     public setServer(server: Internal.MinecraftServer) {
@@ -38,6 +42,7 @@ abstract class Game<TMap extends MapRegister> {
     public end(): void {
         this.timers.length = 0;
         this.resetTags();
+        Game.CurrentGame = null;
     };
 
     public onPlayerJoin(event: any): void {
@@ -225,8 +230,12 @@ abstract class Game<TMap extends MapRegister> {
         if (corpseEntity.type === "corpse:corpse") {
             const corpsePos = corpseEntity.getPosition(0);
             const playerName = this.corpseName(corpseEntity);
-            this.command("tp "+playerName+" "+corpsePos.x() + " " + corpsePos.y() + " " + corpsePos.z());
+            this.command("tp " + playerName + " " + corpsePos.x() + " " + corpsePos.y() + " " + corpsePos.z());
             script();
         }
+    }
+
+    public switchGame(newGame: Game<MapRegister>|null){
+        Game.CurrentGame= newGame;
     }
 }

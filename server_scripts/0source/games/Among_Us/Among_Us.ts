@@ -4,7 +4,7 @@ class AmongUs extends Game<AmongUsMap> {
     private readonly secondsforVoting = 50;
     private readonly confirmVoteOut = false;
     public constructor() {
-        super("amongus", false, false, false,);
+        super("amongus", false, false, false);
         this.currentVoting = new VotingSystem();
     }
 
@@ -38,6 +38,7 @@ class AmongUs extends Game<AmongUsMap> {
 
     public override tick(): void {
         super.tick();
+        
         for (var role of this.roles) {
             role.tick(this.server);
         }
@@ -60,8 +61,12 @@ class AmongUs extends Game<AmongUsMap> {
             this.command(`tellraw @a {"text":"Crewmates Win!","color":"green","bold":true}`);
             return true;
         }
-        const impostorNum = this.roles[0].getPlayers.length;
-        if (impostorNum == this.playersOnTeam("Alive").length) {
+        const impostorNum = this.roles[0].getPlayers().length;
+
+        this.server.tell(impostorNum);
+        this.server.tell(this.playersOnTeam("Alive").length);
+
+        if (impostorNum == this.playersOnTeam("Alive").length - impostorNum) {
             this.server.tell("The Imposters were:");
             for (var player of this.roles[0].getPlayers()) {
                 this.server.tell(player.username);

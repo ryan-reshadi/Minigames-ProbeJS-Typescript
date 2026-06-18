@@ -1,16 +1,14 @@
-var game: Game<MapRegister> = new Dummy();
 var frameBuffer = 10;
 ItemEvents.dropped("supplementaries:wind_vane", (event: KubeEvent<typeof ItemEvents.dropped>) => {
-    game = new AmongUs()
-    game.setServer(event.server);
-    game.start();
+    Game.CurrentGame = new AmongUs()
+    Game.CurrentGame.setServer(event.server);
+    Game.CurrentGame.start();
 });
 
 ItemEvents.dropped("minecraft:end_crystal", (event: KubeEvent<typeof ItemEvents.dropped>) => {
-    game = new Tag(true);
-    event.server.tell("flag");
-    game.setServer(event.server);
-    game.start();
+    Game.CurrentGame = new Tag(true);
+    Game.CurrentGame.setServer(event.server);
+    Game.CurrentGame.start();
 });
 
 
@@ -18,12 +16,12 @@ ItemEvents.dropped("minecraft:end_crystal", (event: KubeEvent<typeof ItemEvents.
 
 
 ServerEvents.tick(event => {
-    game.setServer(event.server);
-    game.tick();
+    Game.CurrentGame?.setServer(event.server);
+    Game.CurrentGame?.tick();
     if (frameBuffer == 0) {
-        if (game.checkEndGame()) {
-            game.end();
-            game = new Dummy();
+        if (Game.CurrentGame?.checkEndGame()) {
+            Game.CurrentGame?.end();
+            Game.CurrentGame = new Dummy();
         }
     } else {
         --frameBuffer;
@@ -32,7 +30,7 @@ ServerEvents.tick(event => {
 
 
 ItemEvents.entityInteracted(event => {
-    game.playerInteractEntity(event);
+    Game.CurrentGame?.playerInteractEntity(event);
 });
 
 ServerEvents.commandRegistry(event => {
@@ -51,7 +49,7 @@ ServerEvents.commandRegistry(event => {
                         const targetPlayer = args.PLAYER.getResult(ctx, 'targetPlayer');
 
                         if (player) {
-                            game.vote(player, targetPlayer.username);
+                            Game.CurrentGame?.vote(player, targetPlayer.username);
                         } else {
                             // Fallback handle if command is run by console/RCON
                             player.tell("Error");
@@ -71,7 +69,7 @@ ServerEvents.commandRegistry(event => {
 
 EntityEvents.death((event: KubeEvent<typeof EntityEvents.death>) => {
     if (event.entity.type == "minecraft:player") {
-        game.onPlayerDeath(event.entity as Internal.Player)
+        Game.CurrentGame?.onPlayerDeath(event.entity as Internal.Player)
     }
 });
 
@@ -79,10 +77,10 @@ EntityEvents.hurt((event: KubeEvent<typeof EntityEvents.hurt>) => {
 
     if (event.entity.type == "minecraft:player") {
         if (event.source.getImmediate() && (event.source.getImmediate()).type == "minecraft:player") {
-            game.playerAttackPlayer(event);
+            Game.CurrentGame?.playerAttackPlayer(event);
         }
         else {
-            game.playerDamaged(event);
+            Game.CurrentGame?.playerDamaged(event);
         }
 
     }
