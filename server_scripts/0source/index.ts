@@ -6,8 +6,9 @@ ItemEvents.dropped("supplementaries:wind_vane", (event: KubeEvent<typeof ItemEve
     game.start();
 });
 
-ItemEvents.dropped("minecraft", (event: KubeEvent<typeof ItemEvents.dropped>) => {
+ItemEvents.dropped("minecraft:end_crystal", (event: KubeEvent<typeof ItemEvents.dropped>) => {
     game = new Tag(true);
+    event.server.tell("flag");
     game.setServer(event.server);
     game.start();
 });

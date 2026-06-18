@@ -14,7 +14,7 @@ abstract class Game<TMap extends MapRegister> {
         this.betterCombat = betterCombat;
         this.parcool = parcool;
     }
-    
+
     public setServer(server: Internal.MinecraftServer) {
         this.server = server;
     }
@@ -221,4 +221,12 @@ abstract class Game<TMap extends MapRegister> {
         }
     }
     protected abstract processDroppedItem(itemID: string, droppingPlayer: Internal.Player): boolean;
+    public ressurrectCorpse(corpseEntity: Internal.Entity, script: () => void = () => { }) {
+        if (corpseEntity.type === "corpse:corpse") {
+            const corpsePos = corpseEntity.getPosition(0);
+            const playerName = this.corpseName(corpseEntity);
+            this.command("tp "+playerName+" "+corpsePos.x() + " " + corpsePos.y() + " " + corpsePos.z());
+            script();
+        }
+    }
 }
