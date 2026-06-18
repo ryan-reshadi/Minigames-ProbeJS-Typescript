@@ -1,6 +1,6 @@
 class Dummy extends Game<MapRegister> {
     protected processDroppedItem(itemID: string, droppingPlayer: Internal.Player): boolean {
-
+        return false;
     }
     public checkEndGame(): boolean {
         return false;

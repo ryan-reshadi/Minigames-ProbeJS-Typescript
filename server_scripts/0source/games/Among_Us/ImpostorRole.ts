@@ -1,8 +1,9 @@
 class ImpostorRole extends Role {
+
     private baseKillCooldown = 20;
     private readonly tool: string = "better_weaponry:iron_dagger";
     private killCooldown: Ability[] = [];
-    
+
     public constructor(amount: number, killCooldown: number) {
         super("impostor", amount);
         this.baseKillCooldown = killCooldown;
@@ -11,18 +12,18 @@ class ImpostorRole extends Role {
     public rightClickPlayer(args: any[]) {
 
     }
-    public leftClickPlayer(args: any[]):any {
+    public leftClickPlayer(args: any[]): any {
         const impostor = (args[0] as Internal.Player);
         const victim = (args[1] as Internal.Entity);
         const killSafe = (args[3] as boolean)
-        if (killSafe){
+        if (killSafe) {
             impostor.tell("You cannot kill during this period...");
             return;
         }
         const mainHandID = (impostor.mainHandItem as Internal.ItemStack).id;
 
         if ((mainHandID as String == this.tool) && (impostor).getTags().contains("impostor") && (!victim.getTags().contains("impostor")) && ((victim as Internal.Entity).team.getName() == "Alive")) {
-            
+
             var killAbility = this.getKillCooldownForPlayer(impostor);
             if (killAbility?.isReady()) {
                 (victim as Internal.Entity).addTag("kill");
@@ -48,7 +49,7 @@ class ImpostorRole extends Role {
         const ability = new Ability("kill", this.baseKillCooldown * 20)
         this.killCooldown.push(ability);
         const bossbarName = player.username.toLocaleLowerCase() + ":" + ability.getName()
-        
+
         player.server.runCommandSilent("bossbar add " + bossbarName + ' \"Kill\"');
         player.server.runCommandSilent("/bossbar set " + bossbarName + " color red");
         player.server.runCommandSilent("bossbar set " + bossbarName + ' max ' + this.baseKillCooldown * 20);
@@ -58,12 +59,12 @@ class ImpostorRole extends Role {
         for (var i = this.killCooldown.length - 1; i >= 0; --i) {
             const ability = this.killCooldown[i];
             ability.tick();
-            if (!ability.isReady()){
+            if (!ability.isReady()) {
 
             }
             const value = (this.baseKillCooldown * 20 - ability.remainingAbilityCooldown());
             const bossbarName = this.players[i].username.toLocaleLowerCase() + ":" + ability.getName();
-            
+
             server.runCommandSilent("bossbar set " + bossbarName + " value " + (value))
         }
     }
@@ -82,5 +83,10 @@ class ImpostorRole extends Role {
     public getKillCooldowns() {
         return this.killCooldown;
     }
+    public onKilled(server: Internal.MinecraftServer): void {
 
+    }
+    public onVotedOut(server: Internal.MinecraftServer): void {
+
+    }
 }

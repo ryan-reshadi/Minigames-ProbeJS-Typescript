@@ -4,6 +4,7 @@ abstract class MapRegister {
     private xDim: number;
     private yDim: number
     private zDim: number
+    private idealTime: number;
     public constructor(pastePos: Point, path: string, xDim:number, yDim:number, zDim:number) {
         this.pastePoint = pastePos;
         this.structureName = path;
@@ -11,7 +12,9 @@ abstract class MapRegister {
         this.yDim = yDim;
         this.zDim = zDim;
     }
-
+    private setIdealTime(time:number){
+        
+    }
     public pasteStructure(server: Internal.MinecraftServer): void {
         server.runCommandSilent("place template " + this.structureName + "");
     }

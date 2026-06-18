@@ -7,12 +7,14 @@ abstract class Game<TMap extends MapRegister> {
     protected currentVoting: VotingSystem | null = null;
     protected map?: TMap;
     protected allowItemDropping: boolean = true;
+
     public constructor(name: string, allowDropping: boolean, betterCombat: boolean, parcool: boolean) {
         this.name = name;
         this.allowItemDropping = allowDropping;
         this.betterCombat = betterCombat;
         this.parcool = parcool;
     }
+    
     public setServer(server: Internal.MinecraftServer) {
         this.server = server;
     }
@@ -23,8 +25,8 @@ abstract class Game<TMap extends MapRegister> {
     public abstract checkEndGame(): boolean;
     public tick(): void {
         this.timers.forEach((value: Timer) => (value.tick()));
-        // this.server.runCommandSilent('parcool ' + this.booleanToEnable(this.parcool));
-        // this.server.runCommandSilent('bctoggle ' + this.booleanToEnable(this.betterCombat));
+        this.server.runCommandSilent('parcool ' + this.booleanToEnable(this.parcool));
+        this.server.runCommandSilent('bctoggle ' + this.booleanToEnable(this.betterCombat));
         this.command("/kill @e[tag=kill]");
         this.command("tag @a remove kill");
         this.currentVoting?.tick();
@@ -100,7 +102,7 @@ abstract class Game<TMap extends MapRegister> {
     public playerHasTag(player: Internal.Player, tagName: string): boolean {
         const tags = player.getTags()
         for (var tag of tags) {
-            if (tag == tagName){
+            if (tag == tagName) {
                 return true;
             }
         }
@@ -192,28 +194,31 @@ abstract class Game<TMap extends MapRegister> {
     }
 
     protected catchItemDrop() {
-        this.server.allLevels.forEach((level: { getEntities: () => any[]; }) => {
-            level.getEntities().forEach(entity => {
+        if (!this.allowItemDropping) {
 
-                // Check if the entity is a dropped item
-                if (entity.type === 'minecraft:item') {
+            this.server.allLevels.forEach((level: { getEntities: () => any[]; }) => {
+                level.getEntities().forEach(entity => {
 
-                    // Get the itemstack (the actual item data)
-                    const itemStack = entity.item
+                    // Check if the entity is a dropped item
+                    if (entity.type === 'minecraft:item') {
 
-                    // Try to find the player who dropped it (the owner)
-                    const droppingPlayer = entity.owner
+                        // Get the itemstack (the actual item data)
+                        const itemStack = entity.item
 
-                    // Only act if we can identify the owner AND the item is not empty
-                    if (droppingPlayer) {
-                        if (!this.processDroppedItem(itemStack, droppingPlayer)) {
-                            droppingPlayer.give(itemStack)
-                            entity.kill()
+                        // Try to find the player who dropped it (the owner)
+                        const droppingPlayer = entity.owner
+
+                        // Only act if we can identify the owner AND the item is not empty
+                        if (droppingPlayer) {
+                            if (!this.processDroppedItem(itemStack, droppingPlayer)) {
+                                droppingPlayer.give(itemStack)
+                                entity.kill()
+                            }
                         }
                     }
-                }
+                })
             })
-        })
+        }
     }
     protected abstract processDroppedItem(itemID: string, droppingPlayer: Internal.Player): boolean;
 }

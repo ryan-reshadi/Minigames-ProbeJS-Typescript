@@ -6,6 +6,12 @@ ItemEvents.dropped("supplementaries:wind_vane", (event: KubeEvent<typeof ItemEve
     game.start();
 });
 
+ItemEvents.dropped("minecraft", (event: KubeEvent<typeof ItemEvents.dropped>) => {
+    game = new Tag(true);
+    game.setServer(event.server);
+    game.start();
+});
+
 
 //whenever calling tick or start, pass in event.server ALWAYS
 

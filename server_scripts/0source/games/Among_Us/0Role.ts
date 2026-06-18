@@ -66,4 +66,7 @@ abstract class Role {
     public getPlayers(): Internal.Player[] {
         return this.players;
     }
+
+    public abstract onKilled(server: Internal.MinecraftServer):void;
+    public abstract onVotedOut(server: Internal.MinecraftServer):void;
 }

@@ -20,7 +20,6 @@ class AmongUs extends Game<AmongUsMap> {
         this.roles = [new ImpostorRole(1, 20)];
         this.resetTags();
         this.command("team join Alive @a[team=!Spectator]")
-        this.command("team join Alive @a[team=Dead]")
         this.command("gamemode adventure @a[team=Alive]");
         this.command("/kill @e[type=minecraft:item]");
         this.addTimer(new Timer(10 * 20, () => {
