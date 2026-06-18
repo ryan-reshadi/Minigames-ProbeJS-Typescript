@@ -1,4 +1,7 @@
 class LuckyTowers extends Game<MapRegister> {
+    protected processDroppedItem(itemID: string, droppingPlayer: Internal.Player): boolean {
+        throw new Error("Method not implemented.");
+    }
     public checkEndGame(): boolean {
         throw new Error("Method not implemented.");
     }

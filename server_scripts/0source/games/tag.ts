@@ -1,7 +1,7 @@
 class Tag extends Game<MapRegister> {
 
     public constructor(parcoolActive: boolean) {
-        super("tag", false, false, parcoolActive);
+        super("tag", false, false, false, parcoolActive);
     }
 
     protected processDroppedItem(itemID: string, droppingPlayer: Internal.Player): boolean {

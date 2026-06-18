@@ -4,7 +4,7 @@ class AmongUs extends Game<AmongUsMap> {
     private readonly secondsforVoting = 50;
     private readonly confirmVoteOut = false;
     public constructor() {
-        super("amongus", false, false, false);
+        super("amongus", false, true, false, false);
         this.currentVoting = new VotingSystem();
     }
 
@@ -38,7 +38,7 @@ class AmongUs extends Game<AmongUsMap> {
 
     public override tick(): void {
         super.tick();
-        
+
         for (var role of this.roles) {
             role.tick(this.server);
         }

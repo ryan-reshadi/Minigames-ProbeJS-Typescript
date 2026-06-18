@@ -9,10 +9,12 @@ abstract class Game<TMap extends MapRegister> {
     protected currentVoting: VotingSystem | null = null;
     protected map?: TMap;
     protected allowItemDropping: boolean = true;
+    protected corpsesSpawn: boolean = true;
 
-    public constructor(name: string, allowDropping: boolean, betterCombat: boolean, parcool: boolean) {
+    public constructor(name: string, allowDropping: boolean, allowCorpses: boolean, betterCombat: boolean, parcool: boolean) {
         this.name = name;
         this.allowItemDropping = allowDropping;
+        this.corpsesSpawn = allowCorpses;
         this.betterCombat = betterCombat;
         this.parcool = parcool;
         this.tickCount = 0;
@@ -28,6 +30,7 @@ abstract class Game<TMap extends MapRegister> {
     public abstract start(): void;
     public abstract checkEndGame(): boolean;
     public tick(): void {
+        this.tickCount++;
         this.timers.forEach((value: Timer) => (value.tick()));
         this.server.runCommandSilent('parcool ' + this.booleanToEnable(this.parcool));
         this.server.runCommandSilent('bctoggle ' + this.booleanToEnable(this.betterCombat));
@@ -36,6 +39,9 @@ abstract class Game<TMap extends MapRegister> {
         this.currentVoting?.tick();
         if (!this.allowItemDropping) {
             this.catchItemDrop();
+        }
+        if (!this.corpsesSpawn) {
+            this.removeCorpses();
         }
     };
 
@@ -267,5 +273,8 @@ abstract class Game<TMap extends MapRegister> {
                 this.command("clear " + player.username + " " + i.getItem().id);
             }
         }
+    }
+    public getTickNum(): number {
+        return this.tickCount;
     }
 }
