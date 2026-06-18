@@ -1,13 +1,13 @@
 class GraveDiggers extends Game<MapRegister> {
-    private readonly keptItems: string[] = [];
+    private readonly keptItems: string[] = ["supplementaries:wind_vane", "minecraft:end_crystal", "minecraft:oak_sign"];
     public constructor() {
         super("gravediggers", true, false, true, true);
     }
     public override start() {
-        this.command("gamerule keepinventory true");
+        this.command("gamerule keepInventory true");
     }
     public override tick() {
-
+        super.tick();
     }
     public override checkEndGame(): boolean {
         return false;
@@ -26,5 +26,8 @@ class GraveDiggers extends Game<MapRegister> {
 
     public override processDroppedItem(itemID: string, droppingPlayer: Internal.Player): boolean {
         return false;
+    }
+    public testMethod() {
+        this.server.tell("flag numbuh 2");
     }
 }

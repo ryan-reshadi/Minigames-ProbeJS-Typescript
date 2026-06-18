@@ -12,7 +12,9 @@ ItemEvents.dropped("minecraft:end_crystal", (event: KubeEvent<typeof ItemEvents.
 });
 
 ItemEvents.dropped("minecraft:oak_sign", (event: KubeEvent<typeof ItemEvents.dropped>) => {
-    Game.CurrentGame?.filterItems(event.player, ["supplementaries:wind_vane", "minecraft:end_crystal"]);
+    Game.CurrentGame = new GraveDiggers();
+    Game.CurrentGame.setServer(event.server)
+    Game.CurrentGame.start();
 });
 
 
