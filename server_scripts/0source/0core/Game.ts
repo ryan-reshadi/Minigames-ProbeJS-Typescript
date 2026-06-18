@@ -1,6 +1,6 @@
 abstract class Game<TMap extends MapRegister> {
     static CurrentGame: Game<MapRegister> | null = null;
-    private tickCount:number;
+    private tickCount: number;
     protected name: string;
     protected server!: Internal.MinecraftServer;
     protected timers: Timer[] = [];
@@ -235,7 +235,37 @@ abstract class Game<TMap extends MapRegister> {
         }
     }
 
-    public switchGame(newGame: Game<MapRegister>|null){
-        Game.CurrentGame= newGame;
+    public switchGame(newGame: Game<MapRegister> | null) {
+        Game.CurrentGame = newGame;
+    }
+
+    public getPlayerInventory(player: Internal.Player): Internal.List<Internal.ItemStack> {
+        return player.inventory.allItems;
+    }
+    public itemStacksWithItem(player: Internal.Player, targetItemID: string): Internal.ItemStack[] {
+        const inv = this.getPlayerInventory(player);
+        let ret: Internal.ItemStack[] = []
+        for (let i of inv) {
+            if (i.getItem().id === targetItemID) {
+                ret.push(i.getItem());
+
+            }
+        }
+        return ret;
+    }
+    public filterItems(player: Internal.Player, allowedItems: string[]) {
+        const inv = this.getPlayerInventory(player);
+        for (let i of inv) {
+            let clean = false;
+            for (let s of allowedItems) {
+                if (i.getItem().id === s) {
+                    clean = true;
+                    break;
+                }
+            }
+            if (!clean) {
+                this.command("clear " + player.username + " " + i.getItem().id);
+            }
+        }
     }
 }

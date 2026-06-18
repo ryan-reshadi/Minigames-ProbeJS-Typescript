@@ -11,6 +11,11 @@ ItemEvents.dropped("minecraft:end_crystal", (event: KubeEvent<typeof ItemEvents.
     Game.CurrentGame.start();
 });
 
+ItemEvents.dropped("minecraft:oak_sign", (event: KubeEvent<typeof ItemEvents.dropped>) => {
+    Game.CurrentGame?.filterItems(event.player, ["supplementaries:wind_vane", "minecraft:end_crystal"]);
+});
+
+
 
 //whenever calling tick or start, pass in event.server ALWAYS
 
@@ -25,6 +30,9 @@ ServerEvents.tick(event => {
         }
     } else {
         --frameBuffer;
+    }
+    if (!Game.CurrentGame) {
+        Game.CurrentGame = new Dummy();
     }
 });
 

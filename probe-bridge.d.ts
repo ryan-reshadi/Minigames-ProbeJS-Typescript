@@ -3,6 +3,8 @@
 // 1. Force load the master event names
 /// <reference path="../kubejs/probe/generated/events.d.ts" />
 
+/// <reference path="../kubejs/probe/generated/registries.d.ts" />
+
 // 2. Force load the master global mappings
 /// <reference path="../kubejs/probe/generated/globals.d.ts" />
 
@@ -23,3 +25,9 @@
 
 //Item Stack
 /// <reference path="../kubejs/probe/generated/internals/internal_22.d.ts" />
+
+//Inventory
+/// <reference path="../kubejs/probe/generated/internals/internal_8.d.ts" />
+
+//Predicate
+/// <reference path="../kubejs/probe/generated/internals/internal_1.d.ts" />
