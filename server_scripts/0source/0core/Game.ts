@@ -277,4 +277,8 @@ abstract class Game<TMap extends MapRegister> {
     public getTickNum(): number {
         return this.tickCount;
     }
+
+    public abstract processBlockBroken(event: KubeEvent<typeof BlockEvents.broken>): void;
+
+    public abstract processBlockPlaced(event: KubeEvent<typeof BlockEvents.placed>): void;
 }

@@ -6,7 +6,7 @@ class Dummy extends Game<MapRegister> {
         return false;
     }
     public constructor() {
-        super("dummy", true, true, false, true);
+        super("dummy", true, true, true, false);
     }
     public playerAttackPlayer(event: Internal.Event): void {
 

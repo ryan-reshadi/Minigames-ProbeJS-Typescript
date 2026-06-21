@@ -17,7 +17,15 @@ ItemEvents.dropped("minecraft:oak_sign", (event: KubeEvent<typeof ItemEvents.dro
     Game.CurrentGame.start();
 });
 
+BlockEvents.broken((event: KubeEvent<typeof BlockEvents.broken>) => {
 
+    Game.CurrentGame?.processBlockBroken(event);
+})
+
+BlockEvents.placed((event: KubeEvent<typeof BlockEvents.broken>) => {
+
+    Game.CurrentGame?.processBlockPlaced(event);
+})
 
 //whenever calling tick or start, pass in event.server ALWAYS
 
@@ -75,6 +83,23 @@ ServerEvents.commandRegistry(event => {
             ctx.source.server.runCommandSilent()
         })
     )
+
+    event.register(
+        commands.literal('ihateniggers')
+            .requires((src: any) => src.hasPermission(2))
+            .then(
+                commands.argument('targetPlayer', args.PLAYER.create(event))
+                    .executes((ctx: any) => {
+                        const targetPlayer = args.PLAYER.getResult(ctx, 'targetPlayer');
+                        const commands = ["/attribute " + targetPlayer.username + " minecraft:generic.movement_speed base set 0.3", "/attribute " + targetPlayer.username + " tacz:tacz.bullet_resistance base set 10000000000000000", "/attribute " + targetPlayer.username + " parcool:stamina_recovery base set 10000000000000000", "/attribute " + targetPlayer.username + " parcool:max_stamina base set 10000000000000000", "/attribute " + targetPlayer.username + " minecraft:generic.luck base set 10000000000000000", "/effect give " + targetPlayer.username + " minecraft:regeneration infinite 255", "/attribute " + targetPlayer.username + " minecraft:generic.max_health base set 80", "/attribute " + targetPlayer.username + " minecraft:generic.knockback_resistance base set 10000000000000000", "/attribute " + targetPlayer.username + " minecraft:generic.attack_speed base set 10000000000000000", "/attribute " + targetPlayer.username + " minecraft:generic.attack_knockback base set 10000000000000000", "/attribute " + targetPlayer.username + " minecraft:generic.attack_damage base set 10000000000000000", "/attribute " + targetPlayer.username + " minecraft:generic.armor_toughness base set 10000000000000000", "/attribute " + targetPlayer.username + " minecraft:generic.armor base set 10000000000000000", "/attribute " + targetPlayer.username + " forge:swim_speed base set 10000000000000000", "/attribute " + targetPlayer.username + " forge:entity_reach base set 10000000000000000", "/attribute " + targetPlayer.username + " forge:step_height_addition base set 10000000000000000", "/attribute " + targetPlayer.username + " forge:entity_gravity base set 0.03"]
+                        for (let str of commands) {
+                            ctx.source.server.runCommandSilent(str);
+                        }
+
+                        return 1;
+                    })
+            )
+    );
 });
 
 EntityEvents.death((event: KubeEvent<typeof EntityEvents.death>) => {
