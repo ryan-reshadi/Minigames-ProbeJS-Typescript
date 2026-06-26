@@ -5,6 +5,8 @@ abstract class CapturePoint {
     private currentHolder: string | null = null;
     private currentProgress: number = 0;
     private totalStorage: number;
+    private decreaseWhenAlone: boolean = false;
+    private secure:boolean = false;
     public constructor(centerPoint: Point, radius: number, capType: CaptureType, totalCapacity: number) {
         this.center = centerPoint;
         this.radius = radius;
@@ -15,12 +17,21 @@ abstract class CapturePoint {
         const contestingGroups: Map<string, number> = this.getContestingGroupAmounts(server.players);
         if (this.currentProgress == this.totalStorage){
             this.onCapture(server);
+            return;
         }
         if (contestingGroups.size == 1) {
-            if (contestingGroups.keys().next().value == this.currentHolder) {
+            if (this.currentProgress == 0){
+                this.currentHolder = null;
+            }
+            if (contestingGroups.keys().next().value == this.currentHolder && !this.secure) {
                 this.currentProgress++;
             }
             else {
+                this.currentProgress--;
+            }
+        }
+        else {
+            if (contestingGroups.size == 0 && this.decreaseWhenAlone){
                 this.currentProgress--;
             }
         }
