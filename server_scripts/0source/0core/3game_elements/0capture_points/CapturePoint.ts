@@ -2,64 +2,156 @@ abstract class CapturePoint {
     private center: Point;
     private radius: number;
     private captureType: CaptureType;
-    private currentHolder: string | null = null;
-    private currentProgress: number = 0;
-    private totalStorage: number;
-    private decreaseWhenAlone: boolean = false;
-    private secure: boolean = false;
-    public constructor(centerPoint: Point, radius: number, capType: CaptureType, totalCapacity: number) {
+
+    // Team/player that fully owns the point
+    private owner: string | null = null;
+
+    // Team/player that the current progress belongs to
+    private progressOwner: string | null = null;
+
+    // Current capture progress
+    private progress: number = 0;
+
+    private readonly totalStorage: number;
+
+    protected decreaseWhenAlone: boolean = false;
+
+    public constructor(
+        centerPoint: Point,
+        radius: number,
+        capType: CaptureType,
+        totalCapacity: number
+    ) {
         this.center = centerPoint;
         this.radius = radius;
         this.captureType = capType;
         this.totalStorage = totalCapacity;
     }
+
     public tick(server: Internal.MinecraftServer): void {
         this.draw(server);
-        const contestingGroups: Map<string, number> = this.getContestingGroupAmounts(server.players);
-        if (this.currentProgress == this.totalStorage) {
-            this.onCapture(server);
+
+        const contestingGroups = this.getContestingGroupAmounts(server.players);
+
+        // Nobody is on the point
+        if (contestingGroups.size === 0) {
+            this.handleEmptyPoint();
             return;
         }
-        if (contestingGroups.size == 1) {
-            if (this.currentProgress == 0) {
-                this.currentHolder = null;
-            }
-            if (contestingGroups.keys().next().value == this.currentHolder && !this.secure) {
-                this.changeProgress(1);
-            }
-            else {
-                this.changeProgress(-1);
-            }
-        }
-        else {
-            if (contestingGroups.size == 0 && this.decreaseWhenAlone) {
-                this.changeProgress(-1);
-            }
+
+        // Multiple groups are on the point -> contested
+        if (contestingGroups.size > 1) {
+            return;
         }
 
+        const [group, playerCount] =
+            contestingGroups.entries().next().value as [string, number];
+
+        const captureSpeed = Math.max(1, playerCount);
+
+        // Completely neutral point
+        if (this.owner === null && this.progressOwner === null) {
+            this.progressOwner = group;
+            this.changeProgress(captureSpeed);
+
+            this.checkCaptureComplete(server);
+            return;
+        }
+
+        // Reinforcing existing progress
+        if (group === this.progressOwner) {
+            this.changeProgress(captureSpeed);
+
+            this.checkCaptureComplete(server);
+            return;
+        }
+
+        // Attacking another group's progress
+        this.changeProgress(-captureSpeed);
+
+        if (this.progress === 0) {
+            // Point is neutralized
+            this.owner = null;
+            this.progressOwner = group;
+
+            // Immediately begin capturing for attacker
+            this.changeProgress(captureSpeed);
+
+            this.checkCaptureComplete(server);
+        }
     }
-    public changeProgress(amount: number): void {
-        this.currentProgress = Math.max(0, Math.min(this.totalStorage, this.currentProgress + amount));
+
+    private handleEmptyPoint(): void {
+        if (!this.decreaseWhenAlone) {
+            return;
+        }
+
+        this.changeProgress(-1);
+
+        if (this.progress === 0) {
+            this.owner = null;
+            this.progressOwner = null;
+        }
     }
+
+    private checkCaptureComplete(server: Internal.MinecraftServer): void {
+        if (this.progress < this.totalStorage) {
+            return;
+        }
+
+        this.progress = this.totalStorage;
+        this.owner = this.progressOwner;
+
+        this.onCapture(server);
+    }
+
+    protected changeProgress(amount: number): void {
+        this.progress = Math.max(
+            0,
+            Math.min(this.totalStorage, this.progress + amount)
+        );
+    }
+
     public draw(server: Internal.MinecraftServer): void {
-        let points: Point[] = this.getCirclePerimeterPoints();
-        for (let point of points) {
+        const points = this.getCirclePerimeterPoints();
+
+        for (const point of points) {
             this.displayParticle(server, point, "minecraft:flame");
         }
     }
-    private displayParticle(server: Internal.MinecraftServer, point: Point, particleType: string): void {
-        server.runCommandSilent(`particle ${particleType} ${point.x} ${point.y} ${point.z} 0 0 0 0 1 force`);
+
+    private displayParticle(
+        server: Internal.MinecraftServer,
+        point: Point,
+        particleType: string
+    ): void {
+        server.runCommandSilent(
+            `particle ${particleType} ${point.x} ${point.y} ${point.z} 0 0 0 0 1 force`
+        );
     }
-    private getPointsInsideCircle(): Point[] {
-        let points: Point[] = [];
-        for (let x = this.center.x - this.radius; x <= this.center.x + this.radius; x++) {
-            for (let z = this.center.z - this.radius; z <= this.center.z + this.radius; z++) {
-                const distance = Math.sqrt(Math.pow(x - this.center.x, 2) + Math.pow(z - this.center.z, 2));
-                if (distance <= this.radius) {
+
+    protected getPointsInsideCircle(): Point[] {
+        const points: Point[] = [];
+
+        for (
+            let x = this.center.x - this.radius;
+            x <= this.center.x + this.radius;
+            x++
+        ) {
+            for (
+                let z = this.center.z - this.radius;
+                z <= this.center.z + this.radius;
+                z++
+            ) {
+                const dx = x - this.center.x;
+                const dz = z - this.center.z;
+
+                if (dx * dx + dz * dz <= this.radius * this.radius) {
                     points.push(new Point(x, this.center.y, z));
                 }
             }
         }
+
         return points;
     }
 
@@ -67,18 +159,19 @@ abstract class CapturePoint {
         const points: Point[] = [];
         const seen = new Set<string>();
 
-        const addPoint = (x: number, z: number) => {
+        const addPoint = (x: number, z: number): void => {
             const worldX = this.center.x + x;
             const worldZ = this.center.z + z;
 
             const key = `${worldX},${worldZ}`;
+
             if (!seen.has(key)) {
                 seen.add(key);
                 points.push(new Point(worldX, this.center.y, worldZ));
             }
         };
 
-        const addSymmetricPoints = (x: number, z: number) => {
+        const addSymmetricPoints = (x: number, z: number): void => {
             addPoint(x, z);
             addPoint(-x, z);
             addPoint(x, -z);
@@ -110,20 +203,67 @@ abstract class CapturePoint {
         return points;
     }
 
+    public getContestingPlayers(
+        players: Internal.Player[]
+    ): Internal.Player[] {
+        const result: Internal.Player[] = [];
 
-    public abstract checkPlayerInRange(player: Internal.Player): boolean;
-    public getContestingPlayers(players: Internal.Player[]): Internal.Player[] {
-        let returnArr = [];
-        for (let player of players) {
+        for (const player of players) {
             if (this.checkPlayerInRange(player)) {
-                returnArr.push(player);
+                result.push(player);
             }
         }
-        return returnArr;
-    }
-    public abstract getContestingGroupAmounts(players: Internal.Player[]): Map<string, number>;
 
-    public abstract onCapture(server: Internal.MinecraftServer): void;
+        return result;
+    }
+
+    protected getOwner(): string | null {
+        return this.owner;
+    }
+
+    protected getProgressOwner(): string | null {
+        return this.progressOwner;
+    }
+
+    protected getProgress(): number {
+        return this.progress;
+    }
+
+    protected getCapturePercent(): number {
+        return (this.progress / this.totalStorage) * 100;
+    }
+
+    protected isCaptured(): boolean {
+        return (
+            this.owner !== null &&
+            this.owner === this.progressOwner &&
+            this.progress === this.totalStorage
+        );
+    }
+
+    protected getCenter(): Point {
+        return this.center;
+    }
+
+    protected getRadius(): number {
+        return this.radius;
+    }
+
+    protected getCaptureType(): CaptureType {
+        return this.captureType;
+    }
+
+    public abstract checkPlayerInRange(
+        player: Internal.Player
+    ): boolean;
+
+    public abstract getContestingGroupAmounts(
+        players: Internal.Player[]
+    ): Map<string, number>;
+
+    public abstract onCapture(
+        server: Internal.MinecraftServer
+    ): void;
 }
 
 enum CaptureType {
