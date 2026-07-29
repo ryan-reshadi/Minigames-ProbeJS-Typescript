@@ -20,6 +20,7 @@ class LuckyTowers extends Game<MapRegister> {
     private lootManager: LootTable = new LootTable();
 
     public start(): void {
+        super.start();
         this.setUpLootManager();
         this.command("/team modify Alive friendlyFire true");
         this.disableBetterCombat();

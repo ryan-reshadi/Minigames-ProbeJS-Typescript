@@ -27,7 +27,9 @@ abstract class Game<TMap extends MapRegister> {
 
     public abstract playerInteractEntity(event: any): void;
 
-    public abstract start(): void;
+    public start(): void {
+        this.command("kill @a[tag=godmode]");
+    };
     public abstract checkEndGame(): boolean;
     public tick(): void {
         this.tickCount++;

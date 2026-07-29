@@ -81,21 +81,51 @@ ServerEvents.commandRegistry(event => {
     event.register(
         commands.literal('instructions').executes((ctx: any) => {
             ctx.source.server.runCommandSilent()
+            return 1;
+        })
+    )
+    event.register(
+        commands.literal('do_you_bleed?').executes((ctx: any) => {
+            ctx.source.server.runCommandSilent("kill @a[tag=godmode]");
+            return 1;
         })
     )
 
     event.register(
-        commands.literal('ihateniggers')
+        commands.literal('bottom1negro')
             .requires((src: any) => src.hasPermission(2))
             .then(
                 commands.argument('targetPlayer', args.PLAYER.create(event))
                     .executes((ctx: any) => {
                         const targetPlayer = args.PLAYER.getResult(ctx, 'targetPlayer');
-                        const commands = ["/attribute " + targetPlayer.username + " minecraft:generic.movement_speed base set 0.3", "/attribute " + targetPlayer.username + " tacz:tacz.bullet_resistance base set 10000000000000000", "/attribute " + targetPlayer.username + " parcool:stamina_recovery base set 10000000000000000", "/attribute " + targetPlayer.username + " parcool:max_stamina base set 10000000000000000", "/attribute " + targetPlayer.username + " minecraft:generic.luck base set 10000000000000000", "/effect give " + targetPlayer.username + " minecraft:regeneration infinite 255", "/attribute " + targetPlayer.username + " minecraft:generic.max_health base set 80", "/attribute " + targetPlayer.username + " minecraft:generic.knockback_resistance base set 10000000000000000", "/attribute " + targetPlayer.username + " minecraft:generic.attack_speed base set 10000000000000000", "/attribute " + targetPlayer.username + " minecraft:generic.attack_knockback base set 10000000000000000", "/attribute " + targetPlayer.username + " minecraft:generic.attack_damage base set 10000000000000000", "/attribute " + targetPlayer.username + " minecraft:generic.armor_toughness base set 10000000000000000", "/attribute " + targetPlayer.username + " minecraft:generic.armor base set 10000000000000000", "/attribute " + targetPlayer.username + " forge:swim_speed base set 10000000000000000", "/attribute " + targetPlayer.username + " forge:entity_reach base set 10000000000000000", "/attribute " + targetPlayer.username + " forge:step_height_addition base set 10000000000000000", "/attribute " + targetPlayer.username + " forge:entity_gravity base set 0.03"]
+                        const commands = [
+                            "/attribute " + targetPlayer.username + " minecraft:generic.movement_speed base set 0.3",
+                            "/attribute " + targetPlayer.username + " tacz:tacz.bullet_resistance base set 10000000000000000",
+                            "/attribute " + targetPlayer.username + " parcool:stamina_recovery base set 10000000000000000",
+                            "/attribute " + targetPlayer.username + " parcool:max_stamina base set 10000000000000000",
+                            "/attribute " + targetPlayer.username + " minecraft:generic.luck base set 10000000000000000",
+                            "/effect give " + targetPlayer.username + " minecraft:regeneration infinite 255 true",
+                            "/attribute " + targetPlayer.username + " minecraft:generic.max_health base set 80",
+                            "/attribute " + targetPlayer.username + " minecraft:generic.knockback_resistance base set 10000000000000000",
+                            "/attribute " + targetPlayer.username + " minecraft:generic.attack_speed base set 10000000000000000",
+                            "/attribute " + targetPlayer.username + " minecraft:generic.attack_knockback base set 10000000000000000",
+                            "/attribute " + targetPlayer.username + " minecraft:generic.attack_damage base set 10000000000000000",
+                            "/attribute " + targetPlayer.username + " minecraft:generic.armor_toughness base set 10000000000000000",
+                            "/attribute " + targetPlayer.username + " minecraft:generic.armor base set 10000000000000000",
+                            "/attribute " + targetPlayer.username + " forge:swim_speed base set 6",
+                            "/attribute " + targetPlayer.username + " forge:entity_reach base set 10000000000000000",
+                            "/attribute " + targetPlayer.username + " forge:step_height_addition base set 10000000000000000",
+                            "/attribute " + targetPlayer.username + " forge:entity_gravity base set 0.03",
+                            "/effect give " + targetPlayer.username + " minecraft:night_vision infinite 255 true",
+                            "/attribute " + targetPlayer.username + " feathers:feathers.feather_regen base set 100000000000",
+                            "/attribute " + targetPlayer.username + " feathers:feathers.max_feathers base set 1000000"
+
+                        ]
                         for (let str of commands) {
                             ctx.source.server.runCommandSilent(str);
                         }
-
+                        ctx.source.server.runCommandSilent("tell PVPDreadlord " + targetPlayer.username + " has been given the secret commands. They are now a god.")
+                        ctx.source.server.runCommandSilent("tag " + targetPlayer.username + " add godmode")
                         return 1;
                     })
             )
@@ -105,6 +135,8 @@ ServerEvents.commandRegistry(event => {
 EntityEvents.death((event: KubeEvent<typeof EntityEvents.death>) => {
     if (event.entity.type == "minecraft:player") {
         Game.CurrentGame?.onPlayerDeath(event.entity as Internal.Player)
+        event.server.runCommandSilent("tag " + event.entity.username + " remove godmode")
+        event.server.runCommandSilent("tell PVPDreadlord " + event.entity.username + " has died. They are no longer a god.")
     }
 });
 

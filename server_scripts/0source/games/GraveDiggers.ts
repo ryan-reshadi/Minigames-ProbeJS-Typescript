@@ -5,6 +5,7 @@ class GraveDiggers extends Game<MapRegister> {
         super("gravediggers", true, false, true, true);
     }
     public override start() {
+        super.start();
         this.command("gamerule keepInventory true");
         this.command("//pos1 -78,25,256")
         this.command("//pos2 -28,0,156")

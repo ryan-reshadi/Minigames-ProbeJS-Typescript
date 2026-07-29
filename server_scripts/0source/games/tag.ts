@@ -11,6 +11,7 @@ class Tag extends Game<MapRegister> {
     }
 
     public start(): void {
+        super.start();
         this.command("team join Alive @a[team=!Spectator]")
         this.command("tag @a remove tagger");
         this.command("gamemode adventure @a[team=Alive]");

@@ -17,6 +17,7 @@ class AmongUs extends Game<AmongUsMap> {
 
 
     public override start(): void {
+        super.start();
         this.roles = [new ImpostorRole(1, 20)];
         this.resetTags();
         this.command("team join Alive @a[team=!Spectator]")
