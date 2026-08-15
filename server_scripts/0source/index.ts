@@ -92,7 +92,7 @@ ServerEvents.commandRegistry(event => {
     )
 
     event.register(
-        commands.literal('bottom1negro')
+        commands.literal('lockedin')
             .requires((src: any) => src.hasPermission(2))
             .then(
                 commands.argument('targetPlayer', args.PLAYER.create(event))
