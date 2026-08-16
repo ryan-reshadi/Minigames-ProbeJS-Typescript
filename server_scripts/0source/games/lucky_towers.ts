@@ -1,22 +1,6 @@
 class LuckyTowers extends Game<MapRegister> {
-    protected processDroppedItem(itemID: string, droppingPlayer: Internal.Player): boolean {
-        throw new Error("Method not implemented.");
-    }
-    public checkEndGame(): boolean {
-        throw new Error("Method not implemented.");
-    }
-    public playerAttackPlayer(event: Internal.Event): void {
-        throw new Error("Method not implemented.");
-    }
-    public playerInteractPlayer(event: KubeEvent<typeof ItemEvents.entityInteracted>): void {
-        throw new Error("Method not implemented.");
-    }
-    public pasteMap(): void {
-
-    }
-    public playerInteractEntity(event: any): void {
-
-    }
+    
+    
     private lootManager: LootTable = new LootTable();
 
     public start(): void {
@@ -58,6 +42,32 @@ class LuckyTowers extends Game<MapRegister> {
     }
     private setUpLootManager() {
 
+    }
+
+    
+    public checkEndGame(): boolean {
+        throw new Error("Method not implemented.");
+    }
+    public playerAttackPlayer(event: Internal.Event): void {
+        throw new Error("Method not implemented.");
+    }
+    public playerInteractPlayer(event: KubeEvent<typeof ItemEvents.entityInteracted>): void {
+        throw new Error("Method not implemented.");
+    }
+    public pasteMap(): void {
+
+    }
+    public playerInteractEntity(event: any): void {
+
+    }
+    public processBlockBroken(event: KubeEvent<typeof BlockEvents.broken>): void {
+        
+    }
+    public processBlockPlaced(event: KubeEvent<typeof BlockEvents.placed>): void {
+        
+    }
+    public itemRightClicked(event: KubeEvent<typeof ItemEvents.rightClicked>): void {
+        
     }
 
 }

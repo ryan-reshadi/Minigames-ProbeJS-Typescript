@@ -1,4 +1,5 @@
 class AmongUs extends Game<AmongUsMap> {
+    
     private roles: Role[] = [new ImpostorRole(1, 20)];
     private killSafe: boolean = false;
     private readonly secondsforVoting = 50;
@@ -178,5 +179,15 @@ class AmongUs extends Game<AmongUsMap> {
     }
     private summonItem(itemName: string, coords: Point) {
         this.command("summon item " + coords.toString() + `{Item:{id:` + itemName + `,Count:1b}}`)
+    }
+
+    public processBlockBroken(event: KubeEvent<typeof BlockEvents.broken>): void {
+        
+    }
+    public processBlockPlaced(event: KubeEvent<typeof BlockEvents.placed>): void {
+        
+    }
+    public itemRightClicked(event: KubeEvent<typeof ItemEvents.rightClicked>): void {
+        
     }
 }

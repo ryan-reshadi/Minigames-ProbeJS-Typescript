@@ -17,6 +17,13 @@ ItemEvents.dropped("minecraft:oak_sign", (event: KubeEvent<typeof ItemEvents.dro
     Game.CurrentGame.start();
 });
 
+ItemEvents.dropped("minecraft:birch_button", (event: KubeEvent<typeof ItemEvents.dropped>) => {
+    Game.CurrentGame = new ParkourRace();
+    Game.CurrentGame.setServer(event.server)
+    Game.CurrentGame.start();
+});
+
+
 BlockEvents.broken((event: KubeEvent<typeof BlockEvents.broken>) => {
 
     Game.CurrentGame?.processBlockBroken(event);
@@ -154,7 +161,11 @@ EntityEvents.hurt((event: KubeEvent<typeof EntityEvents.hurt>) => {
 });
 
 PlayerEvents.chat((event: KubeEvent<typeof PlayerEvents.chat>) => {
-    if (event.message.contains("hey")) {
+    if (event.message.includes("hey")) {
         event.player.tell("fuck yuou")
     }
 })
+
+ItemEvents.rightClicked((event: KubeEvent<typeof ItemEvents.rightClicked>) => {
+    Game.CurrentGame?.itemRightClicked(event);
+});

@@ -1,10 +1,5 @@
 class Dummy extends Game<MapRegister> {
-    protected processDroppedItem(itemID: string, droppingPlayer: Internal.Player): boolean {
-        return false;
-    }
-    public checkEndGame(): boolean {
-        return false;
-    }
+    
     public constructor() {
         super("dummy", true, true, true, true);
     }
@@ -37,6 +32,20 @@ class Dummy extends Game<MapRegister> {
 
     public override onPlayerJoin(event: any): void {
 
+    }
+
+    public processBlockBroken(event: KubeEvent<typeof BlockEvents.broken>): void {
+        throw new Error("Method not implemented.");
+    }
+    public processBlockPlaced(event: KubeEvent<typeof BlockEvents.placed>): void {
+        throw new Error("Method not implemented.");
+    }
+    public itemRightClicked(event: KubeEvent<typeof ItemEvents.rightClicked>): void {
+        throw new Error("Method not implemented.");
+    }
+    
+    public checkEndGame(): boolean {
+        return false;
     }
 
 }

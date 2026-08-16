@@ -28,10 +28,13 @@ abstract class Game<TMap extends MapRegister> {
     public abstract playerInteractEntity(event: any): void;
 
     public start(): void {
-        this.command("kill @a[tag=godmode]");
+        if (this.server){
+            this.command("kill @a[tag=godmode]");
+        }
     };
     public abstract checkEndGame(): boolean;
     public tick(): void {
+        
         this.tickCount++;
         this.timers.forEach((value: Timer) => (value.tick()));
         this.server.runCommandSilent('parcool ' + this.booleanToEnable(this.parcool));
@@ -181,7 +184,11 @@ abstract class Game<TMap extends MapRegister> {
     }
 
     public command(command: string): void {
-        this.server.runCommandSilent(command);
+        if(this.server){
+            this.server.runCommandSilent(command);
+        }else{
+            console.error("Server is not set. Cannot execute command: " + command);
+        }
     }
 
     public playerAttackPlayer(event: KubeEvent<typeof EntityEvents.hurt>): void {
@@ -233,7 +240,11 @@ abstract class Game<TMap extends MapRegister> {
             })
         }
     }
-    protected abstract processDroppedItem(itemID: string, droppingPlayer: Internal.Player): boolean;
+
+    //Gets run if item dropping is not allowed
+    protected processDroppedItem(itemID: string, droppingPlayer: Internal.Player): boolean {
+        return false;
+    }
     public ressurrectCorpse(corpseEntity: Internal.Entity, script: () => void = () => { }) {
         if (corpseEntity.type === "corpse:corpse") {
             const corpsePos = corpseEntity.getPosition(0);
@@ -283,4 +294,6 @@ abstract class Game<TMap extends MapRegister> {
     public abstract processBlockBroken(event: KubeEvent<typeof BlockEvents.broken>): void;
 
     public abstract processBlockPlaced(event: KubeEvent<typeof BlockEvents.placed>): void;
+
+    public abstract itemRightClicked(event: KubeEvent<typeof ItemEvents.rightClicked>): void;
 }

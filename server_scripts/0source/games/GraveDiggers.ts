@@ -1,4 +1,5 @@
 class GraveDiggers extends Game<MapRegister> {
+    
     private readonly keptItems: string[] = ["supplementaries:wind_vane", "minecraft:end_crystal", "minecraft:oak_sign"];
     private readonly vulnerableBlocks: string[] = ["minecraft:stone", "minecraft:cobblestone", "minecraft:andesite", "mossy_cobblestone", "chipped:trodden_mossy_cobblestone", "rough_mossy_cobblestone", "eroded_mossy_stone_bricks", "minecraft:diamond_ore", "minecraft:coal_ore", "minecraft:iron_ore", "minecraft:gold_ore", "minecraft:torch"]
     public constructor() {
@@ -31,7 +32,7 @@ class GraveDiggers extends Game<MapRegister> {
         this.filterItems(player, this.keptItems)
     }
 
-    public override processDroppedItem(itemID: string, droppingPlayer: Internal.Player): boolean {
+    protected override processDroppedItem(itemID: string, droppingPlayer: Internal.Player): boolean {
         return false;
     }
     public testMethod() {
@@ -47,5 +48,9 @@ class GraveDiggers extends Game<MapRegister> {
         event.cancel();
     }
     public override processBlockPlaced(event: KubeEvent<typeof BlockEvents.placed>): void {
+    }
+
+    public itemRightClicked(event: KubeEvent<typeof ItemEvents.rightClicked>): void {
+        
     }
 }

@@ -1,12 +1,11 @@
 class Tag extends Game<MapRegister> {
+    
 
     public constructor(parcoolActive: boolean) {
         super("tag", false, false, false, parcoolActive);
     }
 
-    protected processDroppedItem(itemID: string, droppingPlayer: Internal.Player): boolean {
-        return false;
-    }
+    
     public playerInteractEntity(event: any): void {
     }
 
@@ -59,6 +58,16 @@ class Tag extends Game<MapRegister> {
         if (!event.entity.getTags().contains("kill")) {
             event.cancel()
         }
+    }
+
+    public processBlockBroken(event: KubeEvent<typeof BlockEvents.broken>): void {
+        
+    }
+    public processBlockPlaced(event: KubeEvent<typeof BlockEvents.placed>): void {
+        
+    }
+    public itemRightClicked(event: KubeEvent<typeof ItemEvents.rightClicked>): void {
+        
     }
 }
 
