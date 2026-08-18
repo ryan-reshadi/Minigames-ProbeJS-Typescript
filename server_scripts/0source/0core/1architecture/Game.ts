@@ -10,6 +10,7 @@ abstract class Game<TMap extends MapRegister> {
     protected map?: TMap;
     protected allowItemDropping: boolean = true;
     protected corpsesSpawn: boolean = true;
+    protected loot: Map<string, string[]> = new Map();
 
     public constructor(name: string, allowDropping: boolean, allowCorpses: boolean, betterCombat: boolean, parcool: boolean) {
         this.name = name;
@@ -296,4 +297,8 @@ abstract class Game<TMap extends MapRegister> {
     public abstract processBlockPlaced(event: KubeEvent<typeof BlockEvents.placed>): void;
 
     public abstract itemRightClicked(event: KubeEvent<typeof ItemEvents.rightClicked>): void;
+
+    public addNewChestLoot(itemID: string, lootTable: string[]) {
+        this.loot.set(itemID, lootTable);
+    }
 }

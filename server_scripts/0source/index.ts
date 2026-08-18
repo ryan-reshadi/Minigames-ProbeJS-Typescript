@@ -169,3 +169,17 @@ PlayerEvents.chat((event: KubeEvent<typeof PlayerEvents.chat>) => {
 ItemEvents.rightClicked((event: KubeEvent<typeof ItemEvents.rightClicked>) => {
     Game.CurrentGame?.itemRightClicked(event);
 });
+
+ServerEvents.chestLootTables(event => {
+    event.addChest('hns:basic_chest', (loot: any) => {
+
+        loot.addPool((pool: any) => {
+            pool.rolls = 3
+
+            pool.addItem('minecraft:bread')
+            pool.addItem('minecraft:iron_ingot')
+            pool.addItem('minecraft:coal')
+        })
+
+    })
+})

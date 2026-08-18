@@ -1,7 +1,7 @@
-class ParkourRace extends Game<ParkourRaceMap> {
+class HungerRace extends Game<HungerRaceMap> {
 
     public constructor(teamsOn: boolean = false) {
-        super("Parkour Race", true, false, false, false);
+        super("Hunger Race", true, false, false, false);
 
     }
     public override start() {
@@ -13,6 +13,7 @@ class ParkourRace extends Game<ParkourRaceMap> {
         this.command("gamerule doEntityDrops false");
         this.command("spawnpoint @a[team!=Spectator] " + this.map?.getStartPoint().toString());
         this.command("/execute as @a run attribute @s feathers:feathers.max_feathers base set 0")
+        this.command("gamerule naturalRegeneration false")
         // this.command("/execute as @a run attribute @s feathers:feathers.max_feathers base set 20")
         // this.command("/execute as @a run attribute @s feathers:feathers.feather_regen base set 50")
         
@@ -42,6 +43,7 @@ class ParkourRace extends Game<ParkourRaceMap> {
         return false;
     }
     public onPlayerDeath(player: Internal.Player): void {
+        this.command("/team join Dead " + player.username)
 
     }
 
@@ -53,12 +55,18 @@ class ParkourRace extends Game<ParkourRaceMap> {
     }
 
     public itemRightClicked(event: KubeEvent<typeof ItemEvents.rightClicked>): void {
-        if ((event.item.id as string) == "simplyswords:ribboncleaver") {
-            event.player.setMainHandItem(Item.of('minecraft:air'))
-            // if((event.player.getMainHandItem().getItem() as string) == "simplyswords:ribboncleaver") {
-            // }else if((event.player.getOffHandItem().getItem() as string) == "simplyswords:ribboncleaver") {
-            //     event.player.setOffHandItem(Item.of('minecraft:air'))
-            // }   
+        
+    }
+
+    public getMedicineItemID(name: string): string {
+        switch (name) {
+            case "Medicine Bottle":
+                return `minecraft:potion{CustomPotionEffects:[{Id:10,Amplifier:0,Duration:200}],display:{Name:'{"text":"Medicine Bottle"}'}}`
+            case "Potent Medicine Bottle":
+                return `minecraft:potion{CustomPotionEffects:[{Id:10,Amplifier:1,Duration:130}],display:{Name:'{"text":"Potent Medicine Bottle"}'}}`
+            case "Burst Medicine Bottle":
+                return `minecraft:splash_potion{CustomPotionEffects:[{Id:10,Amplifier:0,Duration:200}],display:{Name:'{"text":"Burst Medicine Bottle"}'}}`
         }
+        return `/give @s minecraft:potion{CustomPotionEffects:[{Id:10,Amplifier:0,Duration:200}],display:{Name:'{"text":"Medicine Bottle"}'}} 1`
     }
 }
