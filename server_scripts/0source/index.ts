@@ -18,7 +18,7 @@ ItemEvents.dropped("minecraft:oak_sign", (event: KubeEvent<typeof ItemEvents.dro
 });
 
 ItemEvents.dropped("minecraft:birch_button", (event: KubeEvent<typeof ItemEvents.dropped>) => {
-    Game.CurrentGame = new ParkourRace();
+    Game.CurrentGame = new HideAndSeek();
     Game.CurrentGame.setServer(event.server)
     Game.CurrentGame.start();
 });
