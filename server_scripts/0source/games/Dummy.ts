@@ -35,13 +35,13 @@ class Dummy extends Game<MapRegister> {
     }
 
     public processBlockBroken(event: KubeEvent<typeof BlockEvents.broken>): void {
-        throw new Error("Method not implemented.");
+        // The idle game does not change block-breaking behavior.
     }
     public processBlockPlaced(event: KubeEvent<typeof BlockEvents.placed>): void {
-        throw new Error("Method not implemented.");
+        // The idle game does not change block-placing behavior.
     }
     public itemRightClicked(event: KubeEvent<typeof ItemEvents.rightClicked>): void {
-        throw new Error("Method not implemented.");
+        // The idle game does not change item-use behavior.
     }
     
     public checkEndGame(): boolean {
