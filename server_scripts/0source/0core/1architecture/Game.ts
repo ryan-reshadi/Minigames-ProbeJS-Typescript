@@ -11,13 +11,17 @@ abstract class Game<TMap extends MapRegister> {
     protected allowItemDropping: boolean = true;
     protected corpsesSpawn: boolean = true;
     protected loot: Map<string, string[]> = new Map();
+    protected lobbyPoint: Point = new Point(0, 64, 0);
 
-    public constructor(name: string, allowDropping: boolean, allowCorpses: boolean, betterCombat: boolean, parcool: boolean) {
+    public constructor(name: string, allowDropping: boolean, allowCorpses: boolean, betterCombat: boolean, parcool: boolean, allowDodging: boolean = true) {
         this.name = name;
         this.allowItemDropping = allowDropping;
         this.corpsesSpawn = allowCorpses;
         this.betterCombat = betterCombat;
         this.parcool = parcool;
+        if (!allowDodging) {
+            this.command("attribute set @a[team=!Spectator] feathers:max_feathers base set 0");
+        }
         this.tickCount = 0;
         Game.CurrentGame = this;
     }
@@ -40,6 +44,7 @@ abstract class Game<TMap extends MapRegister> {
         this.timers.forEach((value: Timer) => (value.tick()));
         this.server.runCommandSilent('parcool ' + this.booleanToEnable(this.parcool));
         this.server.runCommandSilent('bctoggle ' + this.booleanToEnable(this.betterCombat));
+        // this.server.runCommandSilent('say '+this.betterCombat);
         this.command("/kill @e[tag=kill]");
         this.command("tag @a remove kill");
         this.currentVoting?.tick();
@@ -54,6 +59,9 @@ abstract class Game<TMap extends MapRegister> {
     public end(): void {
         this.timers.length = 0;
         this.resetTags();
+        this.command("team join Lobby @a[team!=Spectator]");
+        this.command("gamemode adventure @a[team!=Spectator]");
+        this.command("tp @a[team!=Spectator] " + (this.map?.getStartPoint().toString() ?? "0 64 0"));
         Game.CurrentGame = null;
     };
 

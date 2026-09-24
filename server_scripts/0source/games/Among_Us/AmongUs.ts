@@ -40,7 +40,6 @@ class AmongUs extends Game<AmongUsMap> {
 
     public override tick(): void {
         super.tick();
-
         for (var role of this.roles) {
             role.tick(this.server);
         }

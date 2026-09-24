@@ -1,4 +1,12 @@
 var frameBuffer = 10;
+
+const availableGames = [
+    "hideandseek",
+    "tag",
+    "gravediggers",
+    "amongus",
+    "camouflage"
+];
 ItemEvents.dropped("supplementaries:wind_vane", (event: KubeEvent<typeof ItemEvents.dropped>) => {
     Game.CurrentGame = new AmongUs()
     Game.CurrentGame.setServer(event.server);
@@ -133,6 +141,59 @@ ServerEvents.commandRegistry(event => {
                         }
                         ctx.source.server.runCommandSilent("tell PVPDreadlord " + targetPlayer.username + " has been given the secret commands. They are now a god.")
                         ctx.source.server.runCommandSilent("tag " + targetPlayer.username + " add godmode")
+                        return 1;
+                    })
+            )
+    );
+    // List of games that can be started
+
+    event.register(
+        commands.literal('gamestart')
+            .requires((src: any) => src.hasPermission(2))
+            .then(
+                commands.argument('game', args.STRING.create(event))
+                    .suggests((ctx: any, builder: any) => {
+                        for (let game of availableGames) {
+                            builder.suggest(game);
+                        }
+
+                        return builder.buildFuture();
+                    })
+                    .executes((ctx: any) => {
+                        const game = String(args.STRING.getResult(ctx, 'game')).toLowerCase();
+
+                        // Check that the game actually exists
+                        if (!availableGames.includes(game)) {
+                            ctx.source.sendFailure(
+                                new Text(`Unknown game: ${game}`)
+                            );
+                            return 0;
+                        }
+
+                        // Start the selected game
+                        ctx.source.server.runCommandSilent(
+                            `say Starting game: ${game}`
+                        );
+                        Game.CurrentGame?.switchGame(null); // End the current game
+                        switch (game) {
+                            case "hideandseek":
+                                Game.CurrentGame = new HideAndSeek();
+                                break;
+                            case "tag":
+                                Game.CurrentGame = new Tag(true);
+                                break;
+                            case "gravediggers":
+                                Game.CurrentGame = new GraveDiggers();
+                                break;
+                            case "amongus":
+                                Game.CurrentGame = new AmongUs();
+                                break;
+                            case "camouflage":
+                                Game.CurrentGame = new Camoflauge();
+                                break;
+                        }
+                        Game.CurrentGame?.setServer(ctx.source.server);
+                        Game.CurrentGame?.start();
                         return 1;
                     })
             )
